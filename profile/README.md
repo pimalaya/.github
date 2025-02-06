@@ -72,6 +72,23 @@ Comodoro strives to be everything you need to **manage time using timers**. The 
 - [CLI](https://github.com/pimalaya/comodoro)
 - [Raycast extension](https://www.raycast.com/jns/comodoro)
 
+## 📇 Contacts
+
+### Libraries
+- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-lib](https://github.com/pimalaya/addressbook/tree/master/addressbook-lib): Rust library to manage contacts
+- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav-native-tls](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav-native-tls): Standard CardDAV I/O connector over native TLS for addressbook-lib
+- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav-rustls](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav-rustls): Standard CardDAV I/O connector over Rustls for addressbook-lib
+- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav): Standard CardDAV I/O connector for addressbook-lib
+- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-vdir](https://github.com/pimalaya/addressbook/tree/master/addressbook-vdir): Standard vdir I/O connector for addressbook-lib
+
+### Projects
+
+#### Cardamum, *the contact manager*
+
+Cardamum strives to be everything you need to **manage contacts** using standard protocols and formats. Current interfaces include:
+
+- [CLI](https://github.com/pimalaya/cardamum)
+
 ## 🔒 Security
 
 ### Libraries
