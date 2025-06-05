@@ -4,44 +4,82 @@ Pimalaya is an ambitious project that aims to **improve open-source tools** rela
 
 Pimalaya has **two objectives**:
 
-1. Provide **[Rust](https://www.rust-lang.org) libraries** dedicated to the PIM domain. They serve as a basis for all sorts of top-level applications, which prevents developers to reinvent the wheel.
+1. Provide **I/O-free** [Rust](https://www.rust-lang.org) libraries dedicated to the PIM domain. They serve as a basis for all sorts of top-level applications, which prevents developers to reinvent the wheel.
 2. Provide quality house-made **applications** built on top of these libraries, gathered into projects.
+
+```mermaid
+flowchart RL
+    Comodoro --> timer --> stream
+
+    Himalaya & Neverest & Mirador --> email
+    email --> maildirs ---> fs
+    email --> imap --> starttls --> stream
+    imap --> oauth
+
+    Cardamum --> addressbook
+    addressbook --> vdir --> fs
+    addressbook --> carddav --> oauth
+
+    Ortie --> oauth --> http --> stream
+
+    %% I/O-free libraries
+
+    click addressbook href "https://github.com/pimalaya/io-addressbook"
+    click fs href "https://github.com/pimalaya/io-fs"
+    click http href "https://github.com/pimalaya/io-http"
+    click oauth href "https://github.com/pimalaya/io-oauth"
+    click starttls href "https://github.com/pimalaya/io-starttls"
+    click stream href "https://github.com/pimalaya/io-stream"
+    click timer href "https://github.com/pimalaya/io-timer"
+    click vdir href "https://github.com/pimalaya/io-vdir"
+
+    %% Interfaces
+
+    style Cardamum stroke-width:4px
+    style Comodoro stroke-width:4px
+    style Himalaya stroke-width:4px
+    style Mirador stroke-width:4px
+    style Neverest stroke-width:4px
+    style Ortie stroke-width:4px
+
+    click Cardamum href "https://github.com/pimalaya/cardamum"
+    click Comodoro href "https://github.com/pimalaya/comodoro"
+    click Himalaya href "https://github.com/pimalaya/himalaya"
+    click Mirador href "https://github.com/pimalaya/mirador"
+    click Neverest href "https://github.com/pimalaya/neverest"
+    click Ortie href "https://github.com/pimalaya/ortie"
+```
 
 ## 📫 Email
 
-### Libraries
-
-- [core](https://github.com/pimalaya/core)/[email-lib](https://github.com/pimalaya/core/tree/master/email): Rust library to manage emails
-- [core](https://github.com/pimalaya/core)/[mml-lib](https://github.com/pimalaya/core/tree/master/mml): Rust port of the Emacs MIME Meta Language
-- [imap-client](https://github.com/pimalaya/imap-client): Rust library to manage IMAP sessions
-- [maildirs](https://github.com/pimalaya/maildirs): Rust library to manage collections of Maildir
+*🚧 This domain is being refactored, stay tuned! 🚧*
 
 ### Projects
 
-#### Himalaya, *the email client*
+#### Himalaya
 
-Himalaya was the first project of Pimalaya. It strives to be everything you need to **manage emails**. Few interfaces have been built at the top of `email-lib` and `mml-lib`:
+Himalaya was the first project of Pimalaya. It strives to be everything you need to **manage emails**.
 
 - [CLI](https://github.com/pimalaya/himalaya)
-- REPL (coming soon)
+- [REPL](https://github.com/pimalaya/himalaya-repl)
 - GUI (planned)
 - [Vim plugin](https://github.com/pimalaya/himalaya-vim)
 - [Emacs plugin](https://github.com/dantecatalfamo/himalaya-emacs)
 - [Raycast extension](https://www.raycast.com/jns/himalaya)
 	    
-#### Neverest, *the email synchronizer*
+#### Neverest
 
-Neverest is the project dedicated to email **synchronization** and **backup**. It is a direct concurrent to [OfflineIMAP](https://www.offlineimap.org/) and [mbsync](https://isync.sourceforge.io/mbsync.html). Only a CLI has been built so far, at the top of `email-lib`:
+Neverest is the project dedicated to email **synchronization** and **backup**. It is a direct concurrent to [OfflineIMAP](https://www.offlineimap.org/) and [mbsync](https://isync.sourceforge.io/mbsync.html).
 
 - [CLI](https://github.com/pimalaya/neverest)
 	    
-#### Mirador, *the mailbox watcher*
+#### Mirador
 
-Mirador is the project dedicated to mailbox monitoring. Its aim is to **watch mailboxes changes** and execute action like sending system notification or running shell commands. Only a CLI has been built so far, at the top of `email-lib`:
+Mirador is the project dedicated to mailbox monitoring. Its aim is to **watch mailboxes changes** and execute action like sending system notification or running shell commands.
 
 - [CLI](https://github.com/pimalaya/mirador)
 
-#### MML, *the email message language*
+#### MML
 
 This small project gathers everything related to the Emacs MIME Message Meta Language, as known as [MML](https://www.gnu.org/software/emacs/manual/html_node/emacs-mime/Composing.html):
 
@@ -52,59 +90,43 @@ The two main use cases of the project are:
 1. You want to write a MIME message from scratch or you want to edit an existing one (reply, forward): they can be written in MML then compiled into MIME messages as defined in the [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045).
 2. You want to read a MIME message: they can be interpreted as MML messages, which are way more human-readable than MIME messages.
 
-Few interfaces have been built at the top of mml-lib:
-
 - [CLI](https://github.com/pimalaya/mml)
 - [Vim plugin](https://github.com/pimalaya/mml-vim)
 
-## ⌛ Time
+## ⌛ Timer
 
 ### Libraries
 
-- [core](https://github.com/pimalaya/core)/[time-lib](https://github.com/pimalaya/core/tree/master/time): Rust library to manage time
+- [timer](https://github.com/pimalaya/io-timer): Set of I/O-free Rust coroutines to manage timers
 
 ### Projects
 
-#### Comodoro, *the timer client*
+#### Comodoro
 
-Comodoro strives to be everything you need to **manage time using timers**. The main use case is to track your worktime. A good example is the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique). Few interfaces have been built at the top of `time-lib`:
+Comodoro strives to be everything you need to **manage timers**. The main use case is to track your worktime. A good example is the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
 
 - [CLI](https://github.com/pimalaya/comodoro)
 - [Raycast extension](https://www.raycast.com/jns/comodoro)
 
 ## 📇 Contacts
 
-### Libraries
-- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-lib](https://github.com/pimalaya/addressbook/tree/master/addressbook-lib): Rust library to manage contacts
-- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav-native-tls](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav-native-tls): Standard CardDAV I/O connector over native TLS for addressbook-lib
-- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav-rustls](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav-rustls): Standard CardDAV I/O connector over Rustls for addressbook-lib
-- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-carddav](https://github.com/pimalaya/addressbook/tree/master/addressbook-carddav): Standard CardDAV I/O connector for addressbook-lib
-- [addressbook](https://github.com/pimalaya/addressbook)/[addressbook-vdir](https://github.com/pimalaya/addressbook/tree/master/addressbook-vdir): Standard vdir I/O connector for addressbook-lib
-
-### Projects
-
-#### Cardamum, *the contact manager*
-
-Cardamum strives to be everything you need to **manage contacts** using standard protocols and formats. Current interfaces include:
-
-- [CLI](https://github.com/pimalaya/cardamum)
+*🚧 This domain is being refactored, stay tuned! 🚧*
 
 ## 🔒 Security
 
 ### Libraries
 
-- [core](https://github.com/pimalaya/core)/[pgp-lib](https://github.com/pimalaya/core/tree/master/pgp): Rust library to deal with PGP operations (encrypt, decrypt, sign, verify etc)
-- [core](https://github.com/pimalaya/core)/[oauth-lib](https://github.com/pimalaya/core/tree/master/oauth): Rust library to deal with OAuth flows
-- [core](https://github.com/pimalaya/core)/[secret-lib](https://github.com/pimalaya/core/tree/master/secret): Rust library to deal with secrets
+- [oauth](https://github.com/pimalaya/io-oauth): Set of I/O-free Rust coroutines to manage OAuth flows
 
 ## Sponsoring
 
-[![nlnet](https://nlnet.nl/logo/banner-160x60.png)](https://nlnet.nl/project/Pimalaya/index.html)
+[![nlnet](https://nlnet.nl/logo/banner-160x60.png)](https://nlnet.nl/)
 
-Special thanks to the [NLnet foundation](https://nlnet.nl/project/Pimalaya/index.html) and the [European Commission](https://www.ngi.eu/) that helped the project to receive financial support from:
+Special thanks to the [NLnet foundation](https://nlnet.nl/) and the [European Commission](https://www.ngi.eu/) that helped the project to receive financial support from various programs:
 
-- [NGI Assure](https://nlnet.nl/assure/) in 2022
-- [NGI Zero Entrust](https://nlnet.nl/entrust/) in 2023
+- [NGI Assure](https://nlnet.nl/project/Himalaya/) in 2022
+- [NGI Zero Entrust](https://nlnet.nl/project/Pimalaya/) in 2023
+- [NGI Zero Core](https://nlnet.nl/project/Pimalaya-PIM/) in 2024 *(still ongoing)*
 
 If you appreciate the project, feel free to donate using one of the following providers:
 
