@@ -9,114 +9,91 @@ Pimalaya has **two objectives**:
 
 ```mermaid
 flowchart RL
-    Comodoro --> timer --> stream
+    Comodoro --> io-timer --> io-stream
 
-    Himalaya & Neverest & Mirador --> email
-    email --> maildirs ---> fs
-    email --> imap --> starttls --> stream
-    imap --> oauth
+    Himalaya & Neverest & Mirador & MML --> io-email
+    io-email --> io-maildir --> io-fs
+    io-email --> io-imap --> io-starttls --> io-stream
+    io-imap --> io-oauth
 
-    Cardamum --> addressbook
-    addressbook --> vdir --> fs
-    addressbook --> carddav --> oauth
+    Cardamum --> io-addressbook
+    io-addressbook --> io-vdir --> io-fs
+    io-addressbook --> io-carddav --> io-oauth
 
-    Ortie --> oauth --> http --> stream
+    Calendula --> io-calendar
+    io-calendar --> io-vdir --> io-fs
+    io-calendar --> io-carddav --> io-oauth
+
+    Ortie --> io-oauth --> io-http --> io-stream
 
     %% I/O-free libraries
 
-    click addressbook href "https://github.com/pimalaya/io-addressbook"
-    click fs href "https://github.com/pimalaya/io-fs"
-    click http href "https://github.com/pimalaya/io-http"
-    click oauth href "https://github.com/pimalaya/io-oauth"
-    click starttls href "https://github.com/pimalaya/io-starttls"
-    click stream href "https://github.com/pimalaya/io-stream"
-    click timer href "https://github.com/pimalaya/io-timer"
-    click vdir href "https://github.com/pimalaya/io-vdir"
+    click io-addressbook href "https://github.com/pimalaya/io-addressbook"
+    click io-fs href "https://github.com/pimalaya/io-fs"
+    click io-http href "https://github.com/pimalaya/io-http"
+    click io-oauth href "https://github.com/pimalaya/io-oauth"
+    click io-starttls href "https://github.com/pimalaya/io-starttls"
+    click io-stream href "https://github.com/pimalaya/io-stream"
+    click io-timer href "https://github.com/pimalaya/io-timer"
+    click io-vdir href "https://github.com/pimalaya/io-vdir"
 
     %% Interfaces
 
+    style Calendula stroke-width:4px
     style Cardamum stroke-width:4px
     style Comodoro stroke-width:4px
     style Himalaya stroke-width:4px
     style Mirador stroke-width:4px
+    style MML stroke-width:4px
     style Neverest stroke-width:4px
     style Ortie stroke-width:4px
 
+    click Calendula href "https://github.com/pimalaya/calendula"
     click Cardamum href "https://github.com/pimalaya/cardamum"
     click Comodoro href "https://github.com/pimalaya/comodoro"
     click Himalaya href "https://github.com/pimalaya/himalaya"
     click Mirador href "https://github.com/pimalaya/mirador"
+    click MML href "https://github.com/pimalaya/mml"
     click Neverest href "https://github.com/pimalaya/neverest"
     click Ortie href "https://github.com/pimalaya/ortie"
 ```
 
 ## 📫 Email
 
-*🚧 This domain is being refactored, stay tuned! 🚧*
+- [Himalaya CLI](https://github.com/pimalaya/himalaya), a CLI to manage emails
+  - [pimalaya/himalaya-vim](https://github.com/pimalaya/himalaya-vim): Vim plugin
+  - [dantecatalfamo/himalaya-emacs](https://github.com/dantecatalfamo/himalaya-emacs): Emacs plugin
+  - [jns/himalaya](https://www.raycast.com/jns/himalaya): Raycast extension
+  - [openclaw/openclaw](https://github.com/openclaw/openclaw/blob/main/skills/himalaya/SKILL.md): OpenClaw SKILL
+  - [parisni/dfzf](https://github.com/parisni/dfzf): dfzf integration
+- [Himalaya REPL](https://github.com/pimalaya/himalaya-repl), an experimental REPL to manage emails
+- [Neverest CLI](https://github.com/pimalaya/neverest), a CLI to synchronize and backup emails
+- [Mirador CLI](https://github.com/pimalaya/mirador), a CLI to watch mailbox changes
+- [MML CLI](https://github.com/pimalaya/mml), a CLI to convert MIME messages from/into Emacs MIME Meta Language
+  - [pimalaya/mml-vim](https://github.com/pimalaya/mml-vim): Vim plugin
 
-### Projects
+## ⌛ Time
 
-#### Himalaya
+- [Comodoro CLI](https://github.com/pimalaya/comodoro), a CLI to manage timers
+  - [jns/comodoro](https://www.raycast.com/jns/comodoro): Raycast extension
 
-Himalaya was the first project of Pimalaya. It strives to be everything you need to **manage emails**.
+## 📇 Contact
 
-- [CLI](https://github.com/pimalaya/himalaya)
-- [REPL](https://github.com/pimalaya/himalaya-repl)
-- GUI (planned)
-- [Vim plugin](https://github.com/pimalaya/himalaya-vim)
-- [Emacs plugin](https://github.com/dantecatalfamo/himalaya-emacs)
-- [Raycast extension](https://www.raycast.com/jns/himalaya)
-	    
-#### Neverest
+- [Cardamum CLI](https://github.com/pimalaya/cardamum), a CLI to manage contacts
 
-Neverest is the project dedicated to email **synchronization** and **backup**. It is a direct concurrent to [OfflineIMAP](https://www.offlineimap.org/) and [mbsync](https://isync.sourceforge.io/mbsync.html).
+## 📅 Calendar
 
-- [CLI](https://github.com/pimalaya/neverest)
-	    
-#### Mirador
-
-Mirador is the project dedicated to mailbox monitoring. Its aim is to **watch mailboxes changes** and execute action like sending system notification or running shell commands.
-
-- [CLI](https://github.com/pimalaya/mirador)
-
-#### MML
-
-This small project gathers everything related to the Emacs MIME Message Meta Language, as known as [MML](https://www.gnu.org/software/emacs/manual/html_node/emacs-mime/Composing.html):
-
-> Creating a MIME message is boring and non-trivial. Therefore, a library called mml has been defined that parses a language called MML (MIME Meta Language) and generates MIME messages.
-
-The two main use cases of the project are:
-
-1. You want to write a MIME message from scratch or you want to edit an existing one (reply, forward): they can be written in MML then compiled into MIME messages as defined in the [RFC 2045](https://www.rfc-editor.org/rfc/rfc2045).
-2. You want to read a MIME message: they can be interpreted as MML messages, which are way more human-readable than MIME messages.
-
-- [CLI](https://github.com/pimalaya/mml)
-- [Vim plugin](https://github.com/pimalaya/mml-vim)
-
-## ⌛ Timer
-
-### Libraries
-
-- [timer](https://github.com/pimalaya/io-timer): Set of I/O-free Rust coroutines to manage timers
-
-### Projects
-
-#### Comodoro
-
-Comodoro strives to be everything you need to **manage timers**. The main use case is to track your worktime. A good example is the [Pomodoro Technique](https://en.wikipedia.org/wiki/Pomodoro_Technique).
-
-- [CLI](https://github.com/pimalaya/comodoro)
-- [Raycast extension](https://www.raycast.com/jns/comodoro)
-
-## 📇 Contacts
-
-*🚧 This domain is being refactored, stay tuned! 🚧*
+- [Calendula CLI](https://github.com/pimalaya/calendula), a CLI to manage calendar events
 
 ## 🔒 Security
 
-### Libraries
+- [Ortie CLI](https://github.com/pimalaya/ortie), a CLI to manage OAuth tokens
 
-- [oauth](https://github.com/pimalaya/io-oauth): Set of I/O-free Rust coroutines to manage OAuth flows
+## Social
+
+- Chat on [Matrix](https://matrix.to/#/#pimalaya:matrix.org)
+- News on [Mastodon](https://fosstodon.org/@pimalaya) or [RSS](https://fosstodon.org/@pimalaya.rss)
+- Mail at [pimalaya.org@posteo.net](mailto:pimalaya.org@posteo.net)
 
 ## Sponsoring
 
