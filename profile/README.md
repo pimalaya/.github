@@ -43,8 +43,8 @@ flowchart RL
     style Cardamum stroke-width:4px
     style Comodoro stroke-width:4px
     style Himalaya stroke-width:4px
-    style Mirador stroke-width:4px
     style MML stroke-width:4px
+    style Mirador stroke-width:4px
     style Neverest stroke-width:4px
     style Ortie stroke-width:4px
 
@@ -52,8 +52,8 @@ flowchart RL
     click Cardamum href "https://github.com/pimalaya/cardamum"
     click Comodoro href "https://github.com/pimalaya/comodoro"
     click Himalaya href "https://github.com/pimalaya/himalaya"
-    click Mirador href "https://github.com/pimalaya/mirador"
     click MML href "https://github.com/pimalaya/mml"
+    click Mirador href "https://github.com/pimalaya/mirador"
     click Neverest href "https://github.com/pimalaya/neverest"
     click Ortie href "https://github.com/pimalaya/ortie"
 ```
@@ -88,6 +88,7 @@ flowchart RL
 ## 🔒 Security
 
 - [Ortie CLI](https://github.com/pimalaya/ortie), a CLI to manage OAuth tokens
+- [Mimosa CLI](https://github.com/pimalaya/mimosa), a CLI to manage passwords
 
 ## Social
 
