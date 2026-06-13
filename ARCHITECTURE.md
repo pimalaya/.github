@@ -2,7 +2,14 @@
 
 This document explains how the Pimalaya project is structured and the conventions every repository follows. It is written for **both humans and AI agents**: it is the shared context you need before touching any Pimalaya codebase.
 
-It is intentionally **generic**: it describes patterns that apply to every current and future Pimalaya crate, and uses specific crates only as examples. Each repository also ships its own `CONTRIBUTING.md` with project-specific details. **To contribute, read this document first, then the `CONTRIBUTING.md` of the repository you are working on.**
+It is intentionally **generic**: it describes patterns that apply to every current and future Pimalaya crate, and uses specific crates only as examples. Each repository also ships its own `CONTRIBUTING.md` and `ARCHITECTURE.md` with project-specific details.
+
+**To contribute (human or AI), read in this order:**
+
+1. the [Pimalaya README](https://github.com/pimalaya) (organization profile): what exists and how the pieces fit together;
+2. **this document** (Pimalaya `ARCHITECTURE.md`): the shared architecture and conventions;
+3. the repository's `CONTRIBUTING.md`: how to build, test and submit changes there;
+4. the repository's `ARCHITECTURE.md`: that specific crate's internals.
 
 > This is a living draft. If something here contradicts a repository's own docs or current code, the code wins; please flag the discrepancy.
 
@@ -94,8 +101,8 @@ A Pimalaya crate is organized as up to three layers, each behind a Cargo feature
 A repository stops at whichever layer makes sense:
 
 - **Pure library**: layers 1 and 2 (for example `io-imap`, `io-vdir`). Published to crates.io as a library.
-- **Library plus CLI**: layers 1 to 3 in one repo, the CLI gated behind a feature so library consumers never pull in the argument parser or terminal dependencies (for example `ortie` and `pimconf`, which both ship coroutines, a blocking client, and a CLI). Such crates are still **libraries** for licensing purposes (see section 9).
-- **Standalone application**: a repo whose identity is the product (for example `himalaya`, `neverest`, `cardamum`). It wires several libraries together, owns the I/O loop, and is licensed as an application.
+- **Library plus CLI**: layers 1 to 3 in one repo, the CLI gated behind a feature so library consumers never pull in the argument parser or terminal dependencies (for example `ortie` and `pimconf`, which both ship coroutines, a blocking client, and a CLI).
+- **Standalone application**: a repo whose identity is the product (for example `himalaya`, `neverest`, `cardamum`). It wires several libraries together and owns the I/O loop.
 
 The rule of thumb: a layer is always feature-gated, never assumed. Gate features on **items** (`mod`, `fn`, variant), not around blocks inside a function body. Never use `compile_error!` to forbid a feature combination; gate the module and `bail!` at the call site instead.
 
@@ -151,6 +158,17 @@ Applications do not each reinvent argument parsing, configuration or discovery. 
 - Shared commands address messages by their stable identifier (for email, the IMAP UID); protocol-only addressing (such as `--seq`) belongs only in protocol-specific commands.
 - User-facing output is consistent: spinner messages carry no trailing ellipsis (the spinner already animates), and error messages are capitalized and dotless.
 
+### Output streams and exit codes
+
+Applications treat the standard streams uniformly, which is what makes them scriptable:
+
+- Almost every application supports **structured JSON output** alongside the default human-readable output (typically via a global `--output json` flag).
+- **All program output goes to `stdout`**, both successful data and error messages. Errors are not written to `stderr`.
+- The **exit code is the only signal** that distinguishes data from an error: a zero exit code means the `stdout` payload is the result, a non-zero exit code means it is an error.
+- **`stderr` carries logs only** (the `trace`/log stream), never the primary output.
+
+This keeps `stdout` a single clean channel a caller can parse (especially as JSON) regardless of success or failure, and lets it switch on the exit code to interpret what it received.
+
 ## 7. Rust code style
 
 - Always use `use` imports; never write fully-qualified paths inline (no `std::str::from_utf8(...)` at the call site).
@@ -173,10 +191,9 @@ Applications do not each reinvent argument parsing, configuration or discovery. 
 
 ## 9. Licensing
 
-The license follows the crate's identity, not its layer count:
+Every Pimalaya crate, library or application, is **dual-licensed under MIT OR Apache-2.0**, with no per-file license header.
 
-- **Standalone applications** (a repo whose product is the binary) are **AGPL-3.0** with a per-file license header.
-- **Libraries**, including a library that also ships a CLI behind a feature, are **dual MIT OR Apache-2.0** with no per-file header.
+A few repositories are currently still licensed under AGPL-3.0; these are being migrated back to the dual MIT OR Apache-2.0 license. New work should assume the dual license.
 
 ## 10. Build, test and lint
 
