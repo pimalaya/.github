@@ -4,101 +4,242 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pimalaya | Open-Source PIM Tools in Rust</title>
-    <meta name="description" content="Pimalaya provides open-source Rust libraries and applications for Personal Information Management (PIM): emails, contacts, calendars, tasks and more.">
-    <meta name="keywords" content="Pimalaya, PIM, Personal Information Management, Rust, open-source, email, contacts, calendars, tasks, libraries">
-    <meta name="author" content="Clément DOUIN">
+    <meta name="description" content="Pimalaya builds I/O-free Rust libraries and applications for Personal Information Management (PIM): email, contacts, calendars, tasks and timers.">
+    <meta name="keywords" content="Pimalaya, PIM, Personal Information Management, Rust, open-source, sans-io, email, IMAP, JMAP, SMTP, CardDAV, CalDAV, contacts, calendars, tasks, timers, Himalaya">
+    <meta name="author" content="soywod">
+    <meta name="robots" content="index, follow">
+    <meta name="theme-color" content="#f5edd8">
     <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
     <link rel="canonical" href="https://pimalaya.org/">
+    <link rel="me" href="https://fosstodon.org/@pimalaya">
+    <link rel="me" href="https://github.com/pimalaya">
 
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Pimalaya | Open-Source PIM Tools in Rust">
-    <meta property="og:description" content="Pimalaya provides open-source Rust libraries and applications for Personal Information Management (PIM): emails, contacts, calendars, tasks and more.">
+    <meta property="og:description" content="Pimalaya builds I/O-free Rust libraries and applications for Personal Information Management (PIM): email, contacts, calendars, tasks and timers.">
     <meta property="og:url" content="https://pimalaya.org/">
     <meta property="og:site_name" content="Pimalaya">
     <meta property="og:image" content="https://pimalaya.org/favicon.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:alt" content="Pimalaya logo">
     <meta property="og:locale" content="en_US">
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary">
-    <meta name="twitter:title" content="Pimalaya — Open-Source PIM Tools in Rust">
-    <meta name="twitter:description" content="Open-source Rust libraries and applications for Personal Information Management: emails, contacts, calendars, tasks and more.">
+    <meta name="twitter:title" content="Pimalaya | Open-Source PIM Tools in Rust">
+    <meta name="twitter:description" content="I/O-free Rust libraries and applications for Personal Information Management: email, contacts, calendars, tasks and timers.">
     <meta name="twitter:image" content="https://pimalaya.org/favicon.png">
+    <meta name="twitter:image:alt" content="Pimalaya logo">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Pimalaya",
-      "description": "Open-source Rust libraries and applications for Personal Information Management (PIM): emails, contacts, calendars, tasks and more.",
-      "url": "https://pimalaya.org/",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Cross-platform",
-      "programmingLanguage": "Rust",
-      "author": {
-        "@type": "Person",
-        "name": "Clément DOUIN",
-        "email": "clement.douin@posteo.net"
-      },
-      "codeRepository": "https://github.com/pimalaya",
-      "license": "https://opensource.org/licenses",
-      "funder": [
+      "@graph": [
         {
           "@type": "Organization",
-          "name": "NLnet Foundation",
-          "url": "https://nlnet.nl/"
+          "@id": "https://pimalaya.org/#organization",
+          "name": "Pimalaya",
+          "url": "https://pimalaya.org/",
+          "logo": "https://pimalaya.org/favicon.png",
+          "description": "Pimalaya builds I/O-free Rust libraries and applications for Personal Information Management (PIM): email, contacts, calendars, tasks and timers.",
+          "foundingDate": "2022",
+          "email": "pimalaya.org@posteo.net",
+          "founder": { "@type": "Person", "name": "soywod" },
+          "sameAs": [
+            "https://github.com/pimalaya",
+            "https://fosstodon.org/@pimalaya"
+          ],
+          "funder": [
+            { "@type": "Organization", "name": "NLnet Foundation", "url": "https://nlnet.nl/" },
+            { "@type": "Organization", "name": "European Commission", "url": "https://www.ngi.eu/" }
+          ]
         },
         {
-          "@type": "Organization",
-          "name": "European Commission",
-          "url": "https://www.ngi.eu/"
+          "@type": "WebSite",
+          "@id": "https://pimalaya.org/#website",
+          "url": "https://pimalaya.org/",
+          "name": "Pimalaya",
+          "inLanguage": "en",
+          "publisher": { "@id": "https://pimalaya.org/#organization" }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "name": "Pimalaya",
+          "description": "Open-source Rust libraries and applications for Personal Information Management (PIM): email, contacts, calendars, tasks and timers.",
+          "url": "https://pimalaya.org/",
+          "applicationCategory": "DeveloperApplication",
+          "operatingSystem": "Cross-platform",
+          "programmingLanguage": "Rust",
+          "codeRepository": "https://github.com/pimalaya",
+          "license": "MIT OR Apache-2.0",
+          "author": { "@id": "https://pimalaya.org/#organization" },
+          "publisher": { "@id": "https://pimalaya.org/#organization" },
+          "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
         }
       ]
     }
     </script>
+
+    <!-- Iowan Old Style is an Apple system font; "Gelasio" is loaded as a close
+         old-style fallback for everyone else. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+
+    <style>
+      :root {
+        --ink: #3b2f24;
+        --ink-soft: #6a5a45;
+        --paper: #f5edd8;
+        --rule: #c7b48d;
+        --accent: #7c3a2b;
+      }
+
+      * { box-sizing: border-box; }
+
+      html { -webkit-text-size-adjust: 100%; }
+
+      body {
+        margin: 0;
+        padding: clamp(2.5rem, 7vw, 5.5rem) 1.25rem;
+        color: var(--ink);
+        background: var(--paper);
+        font-family: "Iowan Old Style", "Gelasio", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+        font-size: 1.12rem;
+        line-height: 1.72;
+      }
+
+      .page { max-width: 38rem; margin: 0 auto; }
+
+      .overline {
+        margin: 0 0 .7rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: .28em;
+        font-size: .68rem;
+        color: var(--ink-soft);
+      }
+
+      h1 {
+        margin: 0;
+        text-align: center;
+        font-weight: 500;
+        font-size: clamp(2.6rem, 9vw, 3.8rem);
+        letter-spacing: .02em;
+        line-height: 1;
+      }
+
+      .tagline {
+        margin: .55rem 0 0;
+        text-align: center;
+        font-style: italic;
+        color: var(--ink-soft);
+      }
+
+      .rule {
+        width: 3rem;
+        margin: 2.4rem auto;
+        border: 0;
+        border-top: 1px solid var(--rule);
+      }
+
+      .intro { margin: 0; text-align: justify; hyphens: auto; }
+
+      .intro::first-letter {
+        float: left;
+        margin: .04em .09em 0 0;
+        color: var(--accent);
+        font-size: 3.1em;
+        line-height: .74;
+        font-weight: 600;
+      }
+
+      h2 {
+        margin: 0 0 1rem;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: .22em;
+        font-size: .8rem;
+        font-weight: 600;
+        color: var(--ink-soft);
+      }
+
+      .links { list-style: none; margin: 0; padding: 0; text-align: center; }
+      .links li { padding: .3rem 0; }
+
+      a {
+        color: var(--accent);
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 2px;
+      }
+
+      a:hover { color: var(--ink); }
+
+      .sponsor { text-align: center; color: var(--ink-soft); font-size: .98rem; }
+
+      .sponsor img { filter: sepia(.4) saturate(.85) contrast(.95); mix-blend-mode: multiply; }
+
+      .badges {
+        margin: .8rem 0 0;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: .35rem;
+      }
+
+      .badges img { height: 20px; width: auto; }
+
+      footer {
+        margin-top: 2.4rem;
+        text-align: center;
+        font-size: .82rem;
+        font-style: italic;
+        color: var(--ink-soft);
+      }
+    </style>
   </head>
   <body>
-    <header>
-      <h1>Pimalaya</h1>
-      <p>Pimalaya is an ambitious project that aims to <strong>improve open-source tools</strong> related to <strong>Personal Information Management</strong> (also known as <a href="https://en.wikipedia.org/wiki/Personal_information_manager" rel="noopener">PIM</a>), which includes emails, contacts, calendars, tasks and more.</p>
-    </header>
+    <main class="page">
+      <header>
+        <p class="overline">Personal Information Management &middot; Est. 2022</p>
+        <h1>Pimalaya</h1>
+        <p class="tagline">Open-source PIM tools, written in Rust.</p>
+      </header>
 
-    <main>
-      <section aria-labelledby="objectives">
-        <h2 id="objectives">Objectives</h2>
-        <ol>
-          <li>Provide <strong>I/O-free</strong> <a href="https://www.rust-lang.org/" rel="noopener">Rust</a> libraries dedicated to the PIM domain. They serve as a basis for all sorts of top-level applications, which prevents developers from reinventing the wheel.</li>
-          <li>Provide quality house-made <strong>applications</strong> built on top of these libraries, gathered into projects.</li>
-        </ol>
-      </section>
+      <hr class="rule">
 
-      <section aria-labelledby="resources">
+      <p class="intro">Pimalaya is an ambitious project that aims to improve open-source tools related to personal information management (also known as <a href="https://en.wikipedia.org/wiki/Personal_information_manager" rel="noopener">PIM</a>), which includes emails, contacts, calendars, tasks and more. It provides <strong>I/O-free</strong> <a href="https://www.rust-lang.org/" rel="noopener">Rust</a> libraries dedicated to the PIM domain, which prevents developers from reinventing the wheel, and quality house-made applications built on top of them.</p>
+
+      <hr class="rule">
+
+      <nav aria-labelledby="resources">
         <h2 id="resources">Resources</h2>
-        <ul>
-          <li><a href="https://github.com/pimalaya" rel="noopener">GitHub Organization</a></li>
-          <li><a href="https://github.com/orgs/pimalaya/repositories" rel="noopener">Repositories</a></li>
+        <ul class="links">
+          <li><a href="https://github.com/pimalaya" rel="noopener">GitHub organization</a></li>
+          <li><a href="https://github.com/orgs/pimalaya/repositories" rel="noopener">All repositories</a></li>
+          <li><a href="https://github.com/pimalaya/.github/blob/master/ARCHITECTURE.md" rel="noopener">How Pimalaya works</a></li>
           <li>Chat on <a href="https://matrix.to/#/#pimalaya:matrix.org" rel="noopener">Matrix</a></li>
-          <li>News on <a href="https://fosstodon.org/@pimalaya" rel="noopener">Mastodon</a> or <a href="https://fosstodon.org/@pimalaya.rss" rel="noopener">RSS</a></li>
-          <li>Mail at <a href="mailto:pimalaya.org@posteo.net">pimalaya.org@posteo.net</a></li>
+          <li>News on <a href="https://fosstodon.org/@pimalaya" rel="me noopener">Mastodon</a> or <a href="https://fosstodon.org/@pimalaya.rss" rel="noopener">RSS</a></li>
+          <li>Write to <a href="mailto:pimalaya.org@posteo.net">pimalaya.org@posteo.net</a></li>
         </ul>
-      </section>
+      </nav>
 
-      <section aria-labelledby="sponsoring">
-        <h2 id="sponsoring">Sponsoring</h2>
+      <hr class="rule">
+
+      <section class="sponsor" aria-labelledby="sponsoring">
+        <h2 id="sponsoring">With gratitude</h2>
         <p>
           <a href="https://nlnet.nl/project/Pimalaya/index.html" rel="noopener">
-            <img src="https://nlnet.nl/logo/banner-160x60.png" alt="NLnet Foundation logo" width="160" height="60" loading="lazy">
+            <img src="https://nlnet.nl/logo/banner-160x60.png" alt="NLnet Foundation" width="160" height="60" loading="lazy">
           </a>
         </p>
-	<p>Special thanks to the <a href="https://nlnet.nl/project/Pimalaya/index.html">NLnet foundation</a> and the <a href="https://www.ngi.eu/">European Commission</a> that have been financially supporting the project for years:</p>
-	<ul>
-	  <li>2022: <a href="https://nlnet.nl/project/Himalaya/">NGI Assure</a></li>
-	  <li>2023: <a href="https://nlnet.nl/project/Pimalaya/">NGI Zero Entrust</a></li>
-	  <li>2024: <a href="https://nlnet.nl/project/Pimalaya-PIM/">NGI Zero Core</a> <em>(still ongoing in 2026)</em></li>
-	</ul>
-        <p>If you appreciate the project, feel free to donate using one of the following providers:</p>
-        <nav aria-label="Donation links">
+        <p>Sustained for years by the <a href="https://nlnet.nl/project/Pimalaya/index.html" rel="noopener">NLnet foundation</a> and the <a href="https://www.ngi.eu/" rel="noopener">European Commission</a>.</p>
+	<p>If you appreciate the project, feel free to donate using one of the following providers:</p>
+        <nav class="badges" aria-label="Donation links">
           <a href="https://github.com/sponsors/soywod" rel="noopener"><img src="https://img.shields.io/badge/-GitHub%20Sponsors-fafbfc?logo=GitHub%20Sponsors" alt="Donate via GitHub Sponsors" loading="lazy"></a>
           <a href="https://ko-fi.com/soywod" rel="noopener"><img src="https://img.shields.io/badge/-Ko--fi-ff5e5a?logo=Ko-fi&amp;logoColor=ffffff" alt="Donate via Ko-fi" loading="lazy"></a>
           <a href="https://www.buymeacoffee.com/soywod" rel="noopener"><img src="https://img.shields.io/badge/-Buy%20Me%20a%20Coffee-ffdd00?logo=Buy%20Me%20A%20Coffee&amp;logoColor=000000" alt="Donate via Buy Me a Coffee" loading="lazy"></a>
@@ -107,10 +248,10 @@
           <a href="https://www.paypal.com/paypalme/soywod" rel="noopener"><img src="https://img.shields.io/badge/-PayPal-0079c1?logo=PayPal&amp;logoColor=ffffff" alt="Donate via PayPal" loading="lazy"></a>
         </nav>
       </section>
-    </main>
 
-    <footer>
-      <p>© 2022–2026 Pimalaya</p>
-    </footer>
+      <footer>
+        <p>&copy; 2022&ndash;2026 Pimalaya</p>
+      </footer>
+    </main>
   </body>
 </html>
