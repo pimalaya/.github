@@ -9,54 +9,79 @@ Pimalaya has **two objectives**:
 
 ```mermaid
 flowchart RL
-    Comodoro --> io-timer --> io-stream
-
-    Himalaya & Neverest & Mirador & MML --> io-email
-    io-email --> io-maildir --> io-fs
-    io-email --> io-imap --> io-starttls --> io-stream
-    io-imap --> io-oauth
-
+    %% ── Interfaces (applications) ──
+    Himalaya & HimalayaTui & Neverest & Mirador & MML & m2m & Sirup --> io-email
     Cardamum --> io-addressbook
-    io-addressbook --> io-vdir --> io-fs
-    io-addressbook --> io-carddav --> io-oauth
-
     Calendula --> io-calendar
-    io-calendar --> io-vdir --> io-fs
-    io-calendar --> io-carddav --> io-oauth
+    Comodoro --> io-time
+    Ortie --> io-oauth
+    Tcard & Tcal --> calcard
 
-    Ortie --> io-oauth --> io-http --> io-stream
+    %% ── Domain libraries ──
+    io-email --> io-imap & io-jmap & io-smtp & io-maildir & io-m2dir
+    io-addressbook --> io-vdir & io-webdav
+    io-calendar --> io-vdir & io-webdav
 
-    %% I/O-free libraries
+    %% ── Protocol, storage & transport libraries ──
+    io-jmap & io-webdav & io-oauth --> io-http
+    io-imap & io-smtp & io-http --> pimalaya-stream
 
+    %% ── Labels ──
+    HimalayaTui[Himalaya TUI]
+    Tcard[tcard]
+    Tcal[tcal]
+    calcard["calcard (external)"]
+
+    %% ── Interface styling ──
+    style Himalaya stroke-width:4px
+    style HimalayaTui stroke-width:4px
+    style Neverest stroke-width:4px
+    style Mirador stroke-width:4px
+    style MML stroke-width:4px
+    style m2m stroke-width:4px
+    style Sirup stroke-width:4px
+    style Cardamum stroke-width:4px
+    style Calendula stroke-width:4px
+    style Comodoro stroke-width:4px
+    style Ortie stroke-width:4px
+    style Tcard stroke-width:4px
+    style Tcal stroke-width:4px
+
+    %% ── Links: interfaces ──
+    click Himalaya href "https://github.com/pimalaya/himalaya"
+    click HimalayaTui href "https://github.com/pimalaya/himalaya-tui"
+    click Neverest href "https://github.com/pimalaya/neverest"
+    click Mirador href "https://github.com/pimalaya/mirador"
+    click MML href "https://github.com/pimalaya/mml"
+    click m2m href "https://github.com/pimalaya/m2m"
+    click Sirup href "https://github.com/pimalaya/sirup"
+    click Cardamum href "https://github.com/pimalaya/cardamum"
+    click Calendula href "https://github.com/pimalaya/calendula"
+    click Comodoro href "https://github.com/pimalaya/comodoro"
+    click Ortie href "https://github.com/pimalaya/ortie"
+    click Tcard href "https://github.com/pimalaya/tcard"
+    click Tcal href "https://github.com/pimalaya/tcal"
+
+    %% ── Links: libraries ──
+    click io-email href "https://github.com/pimalaya/io-email"
     click io-addressbook href "https://github.com/pimalaya/io-addressbook"
-    click io-fs href "https://github.com/pimalaya/io-fs"
+    click io-calendar href "https://github.com/pimalaya/io-calendar"
+    click io-imap href "https://github.com/pimalaya/io-imap"
+    click io-jmap href "https://github.com/pimalaya/io-jmap"
+    click io-smtp href "https://github.com/pimalaya/io-smtp"
+    click io-maildir href "https://github.com/pimalaya/io-maildir"
+    click io-m2dir href "https://github.com/pimalaya/io-m2dir"
+    click io-vdir href "https://github.com/pimalaya/io-vdir"
+    click io-webdav href "https://github.com/pimalaya/io-webdav"
     click io-http href "https://github.com/pimalaya/io-http"
     click io-oauth href "https://github.com/pimalaya/io-oauth"
-    click io-starttls href "https://github.com/pimalaya/io-starttls"
-    click io-stream href "https://github.com/pimalaya/io-stream"
-    click io-timer href "https://github.com/pimalaya/io-timer"
-    click io-vdir href "https://github.com/pimalaya/io-vdir"
-
-    %% Interfaces
-
-    style Calendula stroke-width:4px
-    style Cardamum stroke-width:4px
-    style Comodoro stroke-width:4px
-    style Himalaya stroke-width:4px
-    style MML stroke-width:4px
-    style Mirador stroke-width:4px
-    style Neverest stroke-width:4px
-    style Ortie stroke-width:4px
-
-    click Calendula href "https://github.com/pimalaya/calendula"
-    click Cardamum href "https://github.com/pimalaya/cardamum"
-    click Comodoro href "https://github.com/pimalaya/comodoro"
-    click Himalaya href "https://github.com/pimalaya/himalaya"
-    click MML href "https://github.com/pimalaya/mml"
-    click Mirador href "https://github.com/pimalaya/mirador"
-    click Neverest href "https://github.com/pimalaya/neverest"
-    click Ortie href "https://github.com/pimalaya/ortie"
+    click io-time href "https://github.com/pimalaya/io-time"
+    click pimalaya-stream href "https://github.com/pimalaya/stream"
 ```
+
+Applications also share a small framework that is not shown above: [pimalaya-cli](https://github.com/pimalaya/cli), [pimalaya-config](https://github.com/pimalaya/config) and [pimalaya-tui](https://github.com/pimalaya/tui) for argument parsing, configuration and terminal UI, plus [pimconf](https://github.com/pimalaya/pimconf) for service discovery (autoconfig, DNS SRV, well-known URLs).
+
+> 🧭 **New contributor, human or AI?** Read [how Pimalaya works](https://github.com/pimalaya/.github/blob/master/ARCHITECTURE.md) to understand the shared architecture and conventions, then read the `CONTRIBUTING.md` of the repository you want to work on.
 
 ## 📫 Email
 
@@ -66,11 +91,13 @@ flowchart RL
   - [jns/himalaya](https://www.raycast.com/jns/himalaya): Raycast extension
   - [openclaw/openclaw](https://github.com/openclaw/openclaw/blob/main/skills/himalaya/SKILL.md): OpenClaw SKILL
   - [parisni/dfzf](https://github.com/parisni/dfzf): dfzf integration
-- [Himalaya REPL](https://github.com/pimalaya/himalaya-repl), an experimental REPL to manage emails
+- [Himalaya TUI](https://github.com/pimalaya/himalaya-tui), a TUI to manage emails
 - [Neverest CLI](https://github.com/pimalaya/neverest), a CLI to synchronize and backup emails
 - [Mirador CLI](https://github.com/pimalaya/mirador), a CLI to watch mailbox changes
 - [MML CLI](https://github.com/pimalaya/mml), a CLI to convert MIME messages from/into Emacs MIME Meta Language
   - [pimalaya/mml-vim](https://github.com/pimalaya/mml-vim): Vim plugin
+- [m2m CLI](https://github.com/pimalaya/m2m), a CLI to convert between Maildir, Maildir++ and m2dir stores
+- [Sirup CLI](https://github.com/pimalaya/sirup), a CLI to spawn pre-authenticated IMAP/SMTP sessions and expose them over Unix sockets
 
 ## ⌛ Time
 
@@ -80,15 +107,29 @@ flowchart RL
 ## 📇 Contact
 
 - [Cardamum CLI](https://github.com/pimalaya/cardamum), a CLI to manage contacts
+- [tcard CLI & lib](https://github.com/pimalaya/tcard), a CLI & lib to edit vCards as ergonomic TOML
 
 ## 📅 Calendar
 
 - [Calendula CLI](https://github.com/pimalaya/calendula), a CLI to manage calendar events
+- [tcal CLI & lib](https://github.com/pimalaya/tcal), a CLI & lib to edit iCalendars as ergonomic TOML
 
 ## 🔒 Security
 
-- [Ortie CLI](https://github.com/pimalaya/ortie), a CLI to manage OAuth tokens
-- [Mimosa CLI](https://github.com/pimalaya/mimosa), a CLI to manage passwords
+- [Ortie CLI & lib](https://github.com/pimalaya/ortie), to manage OAuth 2.0 tokens
+
+## ⚙️ Configuration
+
+- [Pimconf CLI & lib](https://github.com/pimalaya/pimconf), to discover PIM-related services and manage configuration
+
+## 🧰 Libraries
+
+All libraries are **I/O-free** (`no_std` coroutines with an optional `std` client). See [how Pimalaya works](https://github.com/pimalaya/.github/blob/master/ARCHITECTURE.md) for the shared design.
+
+- Email: [io-email](https://github.com/pimalaya/io-email), [io-imap](https://github.com/pimalaya/io-imap), [io-jmap](https://github.com/pimalaya/io-jmap), [io-smtp](https://github.com/pimalaya/io-smtp), [io-maildir](https://github.com/pimalaya/io-maildir), [io-m2dir](https://github.com/pimalaya/io-m2dir)
+- Contact & calendar: [io-addressbook](https://github.com/pimalaya/io-addressbook), [io-calendar](https://github.com/pimalaya/io-calendar), [io-vdir](https://github.com/pimalaya/io-vdir), [io-webdav](https://github.com/pimalaya/io-webdav)
+- Transport & misc: [io-http](https://github.com/pimalaya/io-http), [io-oauth](https://github.com/pimalaya/io-oauth), [io-time](https://github.com/pimalaya/io-time), [pimalaya-stream](https://github.com/pimalaya/stream)
+- Application framework: [pimalaya-cli](https://github.com/pimalaya/cli), [pimalaya-config](https://github.com/pimalaya/config), [pimalaya-tui](https://github.com/pimalaya/tui), [pimconf](https://github.com/pimalaya/pimconf)
 
 ## Social
 
@@ -102,9 +143,10 @@ flowchart RL
 
 Special thanks to the [NLnet foundation](https://nlnet.nl/) and the [European Commission](https://www.ngi.eu/) that have been financially supporting the project for years:
 
-- 2022: [NGI Assure](https://nlnet.nl/project/Himalaya/)
-- 2023: [NGI Zero Entrust](https://nlnet.nl/project/Pimalaya/)
-- 2024: [NGI Zero Core](https://nlnet.nl/project/Pimalaya-PIM/) *(still ongoing in 2026)*
+- 2022 → 2023: [NGI Assure](https://nlnet.nl/project/Himalaya/)
+- 2023 → 2024: [NGI Zero Entrust](https://nlnet.nl/project/Pimalaya/)
+- 2024 → 2026: [NGI Zero Core](https://nlnet.nl/project/Pimalaya-PIM/)
+- *2027 in preparation…*
 
 If you appreciate the project, feel free to donate using one of the following providers:
 

@@ -10,9 +10,10 @@ Public profile of the Pimalaya GitHub Organization.
 
 Special thanks to the [NLnet foundation](https://nlnet.nl/) and the [European Commission](https://www.ngi.eu/) that have been financially supporting the project for years:
 
-- 2022: [NGI Assure](https://nlnet.nl/project/Himalaya/)
-- 2023: [NGI Zero Entrust](https://nlnet.nl/project/Pimalaya/)
-- 2024: [NGI Zero Core](https://nlnet.nl/project/Pimalaya-PIM/) *(still ongoing in 2026)*
+- 2022 → 2023: [NGI Assure](https://nlnet.nl/project/Himalaya/)
+- 2023 → 2024: [NGI Zero Entrust](https://nlnet.nl/project/Pimalaya/)
+- 2024 → 2026: [NGI Zero Core](https://nlnet.nl/project/Pimalaya-PIM/)
+- *2027 in preparation…*
 
 If you appreciate the project, feel free to donate using one of the following providers:
 
