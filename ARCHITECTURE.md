@@ -169,6 +169,13 @@ Applications treat the standard streams uniformly, which is what makes them scri
 
 This keeps `stdout` a single clean channel a caller can parse (especially as JSON) regardless of success or failure, and lets it switch on the exit code to interpret what it received.
 
+### Usage documentation
+
+Usage is documented where the user already looks, not duplicated in the README:
+
+- For **CLIs and TUIs**, the canonical usage reference is `--help`. Each command's doc comment is its `--help` text: the first paragraph is the short summary (shown by `-h`), and the full text (shown by `--help`) ends with the command's JSON output shape. So `<bin> <command> --help` documents every argument and output for both humans and AI agents. A repository README therefore carries no per-command usage; its Usage section just points to `<bin> --help`.
+- For **libraries**, the canonical reference is the generated API documentation on [docs.rs](https://docs.rs); the README points there rather than restating the API.
+
 ## 7. Rust code style
 
 - Always use `use` imports; never write fully-qualified paths inline (no `std::str::from_utf8(...)` at the call site).
