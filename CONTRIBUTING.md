@@ -5,9 +5,9 @@ Thank you for investing your time in contributing to Pimalaya.
 Whether you are a human or an AI agent, read these in order before touching any code:
 
 1. the [Pimalaya README](https://github.com/pimalaya) for what the project is and how its repositories stack;
-2. this guide, together with [ARCHITECTURE.md](./ARCHITECTURE.md) (the shared architecture and conventions) and [GUIDELINES.md](./GUIDELINES.md) (how everything is documented and named);
+2. this guide, together with [ARCHITECTURE.md](./ARCHITECTURE.md) (the shared architecture and conventions), [GUIDELINES.md](./GUIDELINES.md) (how everything is documented and named) and [AI_POLICY.md](./AI_POLICY.md) (how AI is used here, and what an AI-assisted contribution must satisfy);
 3. the repository's inline header documentation, starting with src/lib.rs (or src/main.rs for binaries): it is the architecture document of that crate;
-4. the repository's own CONTRIBUTING.md when it exists (it documents only what differs from this guide) and its docs/ folder (development history and living plans).
+4. the repository's own CONTRIBUTING.md when it exists (it documents only what differs from this guide) and its cairn/ folder (development history and living plans, following the Cairn convention).
 
 ## Development environment
 

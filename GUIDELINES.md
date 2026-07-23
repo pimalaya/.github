@@ -1,260 +1,46 @@
 # Documentation and naming guidelines
 
-How every Pimalaya repository documents itself (markdown files, inline docs) and names its public items. Written for both humans and AI agents, and referenced by the org-wide [CONTRIBUTING.md](./CONTRIBUTING.md): read the [Pimalaya README](https://github.com/pimalaya) for what exists, [ARCHITECTURE.md](./ARCHITECTURE.md) for the shared architecture, this document for how things are documented and named, then the repository's own CONTRIBUTING.md and docs/ folder.
+How every Pimalaya repository documents itself, sets up its code, and names its public items. Written for both humans and AI agents, and referenced by the org-wide [CONTRIBUTING.md](./CONTRIBUTING.md). Read the [Pimalaya README](https://github.com/pimalaya) for what exists, [ARCHITECTURE.md](./ARCHITECTURE.md) for the shared architecture, this document for conventions, then the repository's own CONTRIBUTING.md and cairn/ folder.
 
-Templates and examples are embedded throughout: when creating or auditing a file, start from the template rather than reinterpreting the prose.
+> This is a living draft, iterated with usage. When a repository contradicts it, the repository needs realigning. Flag the discrepancy.
 
-> This is a living draft, iterated with usage. When a repository contradicts it, the repository needs realigning; flag the discrepancy.
+## How to read this document
+
+Each rule is one paragraph with a stable id and a strength. The id is `scope-nnn`, where the scope names the area (for example cargo, readme, naming) and the number is stable: it never changes once assigned, even if rules are added, removed, or reordered around it. The strength is MUST for a hard requirement or SHOULD for a strong preference that a repository may override with a reason. MUST and SHOULD are mixed freely within a scope.
+
+Scopes are organised into three groups. Code covers the source, its packaging, the repository file skeleton, commits, and code documentation. Markdown covers the documentation files, split by file. Audit covers tests, security, and licensing.
+
+Templates are embedded throughout and are load-bearing. When creating or auditing a file, start from the template rather than reinterpreting the prose.
+
+## Requesting a conformance check
+
+Ask to check a repository against specific ids (`readme-003`, `naming-007`), against a whole scope (`cargo`), against a group (`Code`), or against everything. The answer is a table, one row per rule in scope, each row PASS, FAIL, or N/A with the evidence (a file and line, or the command output). Nothing in scope is left out of the table. Resolution is then iterated row by row.
 
 ## Table of contents
 
-- [Repository files](#repository-files)
-- [Markdown rules](#markdown-rules)
-- [README](#readme)
-- [CONTRIBUTING](#contributing)
-- [CHANGELOG](#changelog)
-- [Commits](#commits)
-- [docs/](#docs)
-- [SECURITY](#security)
-- [Cargo.toml](#cargotoml)
-- [lib.rs and main.rs headers](#librs-and-mainrs-headers)
-- [Crate setup and imports](#crate-setup-and-imports)
-- [Inline docs](#inline-docs)
-- [Logging](#logging)
-- [Naming conventions](#naming-conventions)
-- [License](#license)
+- Code: [repo](#repo), [commits](#commits), [nix](#nix), [cargo](#cargo), [crate](#crate), [header](#header), [inline](#inline), [logging](#logging), [naming](#naming)
+- Markdown: [markdown](#markdown), [readme](#readme), [contributing](#contributing), [changelog](#changelog), [cairn](#cairn)
+- Audit: [tests](#tests), [security](#security), [license](#license)
 
-## Repository files
+# Code
 
-Every repository ships the same documentation skeleton: README.md, CHANGELOG.md, LICENSE-MIT and LICENSE-APACHE, deny.toml, a docs/ folder, CONTRIBUTING.md when the repository deviates from the org-wide guide, SECURITY.md when applicable, and config.sample.toml when the binary reads a config file. Only deviate when the repository genuinely lacks the concept.
+## repo
 
-## Markdown rules
+**repo-001** (MUST): every repository ships the same documentation skeleton: README.md, CHANGELOG.md, LICENSE-MIT and LICENSE-APACHE, deny.toml, a cairn/ folder, CONTRIBUTING.md when the repository deviates from the org-wide guide, SECURITY.md when applicable, and config.sample.toml when the binary reads a config file. Only deviate when the repository genuinely lacks the concept.
 
-Rules applying to every markdown file (README, CONTRIBUTING, CHANGELOG, docs/):
+## commits
 
-- Never hard-wrap: each paragraph or bullet stays on one long line, editors soft-wrap.
-- No em dashes; use a colon or semicolon instead.
-- Never wrap file or path references in backticks: write bare config.sample.toml or a markdown link. Backticks are for code identifiers, and README is not allowed to contain any (see below).
-- Shell command blocks are fenced with sh, not bash nor shell.
-- Concise yet precise: signal-dense sentences carrying the subject, the operation and the reason; no marketing prose, no motivation paragraphs. Prefer paragraphs over dash lists in prose; lists are for genuinely enumerable content.
+**commits-001** (MUST): commits follow the [conventional commits specification](https://www.conventionalcommits.org/en/v1.0.0/), applied flexibly. Keep the subject imperative and scoped. Describe the why in the body when it is not obvious.
 
-## README
+## nix
 
-The README is the public documentation: it exists for users to understand what the library or application does and how to get it. It contains no code, not even identifier references: the technical documentation is docs.rs, autogenerated from the inline docs (and --help for CLIs).
+**nix-001** (SHOULD): flake and packaging conventions live here. No rules are captured yet. Add them as the flake.nix and package.nix conventions settle, so a repository can be checked against them.
 
-### Header
+## cargo
 
-Two flavours, picked by whether logo.svg exists at the repo root, never mixed.
+Applies to Cargo.toml and, by extension, to any other language-specific manifest such as package.json. The Rust manifest rules below are the settled ones. Manifest rules for other ecosystems are added here as they are needed.
 
-HTML flavour, only for the flagship binaries shipping a logo (himalaya, himalaya-tui, neverest); a screenshot goes right under it, and an optional caution or warning callout flags pre-stable status:
-
-```html
-<div align="center">
-  <img src="./logo.svg" alt="Logo" width="128" height="128" />
-  <h1><Icon> <Name></h1>
-  <p><One-line tagline></p>
-  <p>
-    <a href="https://matrix.to/#/#pimalaya:matrix.org"><img alt="Matrix" src="https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white"/></a>
-    <a href="https://fosstodon.org/@pimalaya"><img alt="Mastodon" src="https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white"/></a>
-  </p>
-</div>
-```
-
-Markdown flavour, for every other repo; the docs.rs badge comes first and is skipped when no library is published on crates.io:
-
-```markdown
-# <Maybe icon> <Name> [![Documentation](https://img.shields.io/docsrs/<crate>?style=flat&logo=docs.rs&logoColor=white)](https://docs.rs/<crate>/latest/<crate>) [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya)
-
-<One-sentence description without trailing dot>
-```
-
-For io- libraries the description may be followed by the layers block, adjusted to the layers the crate actually ships:
-
-```markdown
-This library is composed of 3 feature-gated layers:
-
-- Low-level **I/O-free** coroutines: no_std-compatible state machines containing the whole <domain> logic, usable anywhere
-- Mid-level **light client**: a standard, blocking client wrapping a stream you opened yourself
-- High-level **full client**: the light client plus TCP connections and TLS negotiations handled for you
-```
-
-### Screenshot
-
-Binaries with a visible interface show it between the one-line description and the table of contents: the flagship binaries above and every GUI application. A single centered screenshot suits a single screen; an application with several screens uses a horizontally scrolling row instead. Screenshots live in a screenshots/ folder at the repository root. Libraries ship no screenshot.
-
-The scrolling row is a plain HTML table, one screenshot per column in a single row, each image given a fixed pixel width so the combined width overflows the README column and GitHub renders a horizontal scrollbar rather than wrapping the images onto a second line:
-
-```html
-<table><tr>
-<td><img src="screenshots/first.png" width="200" alt="<what the screen shows>" /></td>
-<td><img src="screenshots/second.png" width="200" alt="<what the screen shows>" /></td>
-</tr></table>
-```
-
-### Sections, in order
-
-Libraries: Table of contents, Features, RFC coverage, Usage, Examples, AI disclosure, License, Social, Contributing, Sponsoring.
-
-CLIs and TUIs: Table of contents, Features, RFC or API coverage (when meaningful), Installation, Configuration, Usage, AI disclosure, License, Social, Contributing, Sponsoring.
-
-### Features
-
-One bullet per feature, two lines max each, worded for users rather than implementers; no RFC references, they belong to the coverage section:
-
-```markdown
-- **Device authorization grant**: sign in by typing a short code on another device, for hosts without a browser.
-```
-
-The TLS support block keeps this exact shape, and the section closes with the tip callout when the crate uses cargo features:
-
-```markdown
-- Full standard, blocking client with **TLS** support:
-  - [Rustls](https://crates.io/crates/rustls) with ring crypto (requires `rustls-ring` feature, enabled by default)
-  - [Rustls](https://crates.io/crates/rustls) with aws crypto (requires `rustls-aws` feature)
-  - [Native TLS](https://crates.io/crates/native-tls) (requires `native-tls` feature)
-```
-
-### RFC or API coverage
-
-What the crate supports in protocol terms, each RFC (or provider API) linked; no code identifiers, just an explanation of what is covered:
-
-```markdown
-| RFC    | What is covered                                                                             |
-|--------|---------------------------------------------------------------------------------------------|
-| [6749] | The OAuth 2.0 framework: authorization code grant, client credentials grant, token issuance and refresh |
-| [7591] | Dynamic client registration: register a public client without any provider console          |
-
-[6749]: https://www.rfc-editor.org/rfc/rfc6749
-[7591]: https://www.rfc-editor.org/rfc/rfc7591
-```
-
-### Installation and Configuration (CLI/TUI only)
-
-Installation subsections in order: Pre-built binary, Cargo, Nix, Sources. Configuration describes the wizard behavior when one exists, then the canonical config paths and overrides, linking to config.sample.toml for the full field reference:
-
-```markdown
-A configuration is loaded from the first valid path among:
-
-- $XDG_CONFIG_HOME/<name>/config.toml
-- $HOME/.config/<name>/config.toml
-- $HOME/.<name>rc
-
-Override the path with -c <PATH> or <NAME>_CONFIG=<PATH>; multiple paths can be passed at once, separated by :. The first one is the base and the rest are deep-merged on top. The full field reference lives in [config.sample.toml](./config.sample.toml).
-```
-
-### Usage and Examples
-
-Both are redirects, not manuals. Usage points to docs.rs for libraries and to --help for CLIs (which may inline a few real-world command lines); Examples points to the examples folder and to tests when they demonstrate usage:
-
-```markdown
-## Usage
-
-The whole API is documented on [docs.rs](https://docs.rs/<crate>/latest/<crate>), including runnable snippets for every coroutine and client.
-
-## Examples
-
-Complete runnable programs live in [./examples](./examples); the tests also demonstrate real usage.
-```
-
-### AI disclosure
-
-The standard block, with no blank lines between items:
-
-```markdown
-## AI disclosure
-
-This project is developed with AI assistance. This section documents how, so users and downstream packagers can make informed decisions.
-
-- **Tools**: Claude Code (Anthropic), invoked locally with a persistent project-scoped memory and a small set of repo-specific rules.
-- **Used for**: Refactors, mechanical multi-file edits, boilerplate (feature gates, error enums, derive macros, trait impls), test scaffolding, doc polish, exploratory design conversations.
-- **Not used for**: Engineering, critical code, git manipulation (commit, merge, rebase…), real-world tests.
-- **Verification**: Every AI-assisted change is read, compiled, tested, and formatted before commit. Behavioural correctness is verified against the relevant RFC or upstream spec, not assumed from the model output. Tests are never adjusted to fit AI-generated code; the code is adjusted to fit correct behaviour.
-- **Limitations**: AI models occasionally produce code that compiles and passes tests but is subtly wrong. The verification workflow catches most of this; it does not catch all of it. Bug reports are welcome and taken seriously.
-- **Last reviewed**: <DD/MM/YYYY>
-```
-
-### License, Social, Contributing, Sponsoring
-
-License states the dual licensing, linking both files. Social is byte-identical across repos:
-
-```markdown
-## Social
-
-- Chat on [Matrix](https://matrix.to/#/#pimalaya:matrix.org)
-- News on [Mastodon](https://fosstodon.org/@pimalaya) or [RSS](https://fosstodon.org/@pimalaya.rss)
-- Mail at [pimalaya.org@posteo.net](mailto:pimalaya.org@posteo.net)
-
-## Contributing
-
-Contributions are welcome: start with [CONTRIBUTING.md](./CONTRIBUTING.md), which opens with the Pimalaya-wide guides to read first.
-```
-
-Sponsoring closes the README: the NLnet banner, the year-by-year grant list (2022 → 2023 NGI Assure, 2023 → 2024 NGI Zero Entrust, 2024 → 2026 NGI Zero Core, 2027 in preparation), then the six donation badges (GitHub Sponsors, Ko-fi, Buy Me a Coffee, Liberapay, thanks.dev, PayPal); the block is byte-identical across repos, copy it from an existing README rather than retyping it.
-
-## CONTRIBUTING
-
-The standard contributing guide lives once at the org level, in [.github/CONTRIBUTING.md](./CONTRIBUTING.md): GitHub serves it as the default for every repository that does not ship its own. It covers the reading order (Pimalaya README, then the org guides, then the local docs), the Nix development environment, the layered build checks, lint, test, audit, dependency overrides and the commit style.
-
-A repository adds its own CONTRIBUTING.md only when something differs from the standard, and that file documents only the differences, opening with the same reading order:
-
-```markdown
-# Contributing guide
-
-Thank you for investing your time in contributing to <Name>.
-
-Whether you are a human or an AI agent, read these in order before touching the code:
-
-1. the [Pimalaya README](https://github.com/pimalaya) for what the project is and how its repositories stack;
-2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
-3. the inline header documentation, starting with src/lib.rs (or src/main.rs): it is the architecture document of this crate;
-4. the docs/ folder for the development history and living plans.
-
-Everything below documents only what differs from the Pimalaya standards.
-
-## <Repo-specific section, e.g. the feature matrix to build against>
-```
-
-## CHANGELOG
-
-Keep a Changelog 1.0.0 format with SemVer, entries grouped under Added, Changed, Fixed, Removed. Each item is a one-line (two max) past-tense summary of the change; when more context is needed, an indented paragraph follows after a blank line. A release section reports the net changes relative to the previous version, not a complete history log: interior churn is folded into final-state entries, and history belongs to the docs/ folder.
-
-```markdown
-## [Unreleased]
-
-### Added
-
-- Added the `grant` account config field.
-
-  Selects the OAuth 2.0 grant flow run by the auth commands; defaults to `authorization-code`, the previous implicit behavior.
-
-### Changed
-
-- Enabled PKCE by default with the S256 method, aligning with OAuth 2.1.
-```
-
-## Commits
-
-Commits follow the [conventional commits specification](https://www.conventionalcommits.org/en/v1.0.0/), applied flexibly: keep the subject imperative and scoped, and describe the why in the body when it is not obvious.
-
-## docs/
-
-The docs/ folder is the development memory of the repository, used by AI agents (and humans) to track what is done during development: it describes the architecture where it outgrows the lib.rs or main.rs header, and logs thoughts, plans and their outcomes. A README.md inside indexes the sub docs, one line per file. Files mix kinds freely; plans are never deleted once done, their Landed sections are the history:
-
-```text
-docs/
-  README.md       one-line index of every file below
-  design.md       the settled design and its rejected alternatives
-  sync-plan.md    staged plan; its Landed section records what shipped and the deviations
-  providers.md    living log of real-provider findings
-```
-
-## SECURITY
-
-When applicable: a Supported Versions table reflecting the current version line, and a Reporting a Vulnerability section pointing at the repository's issue tracker or a private contact.
-
-## Cargo.toml
-
-The library manifest shape, with its package field order:
+**cargo-001** (MUST): the library manifest uses the package field order shown below, description right after name.
 
 ```toml
 [package]
@@ -297,13 +83,21 @@ pimalaya-stream = { version = "0.0.1", default-features = false, optional = true
 thiserror = { version = "2", default-features = false }
 ```
 
-The description matches the README one-sentence description, no trailing dot. The license is always MIT OR Apache-2.0. io- libraries carry the api-bindings and no-std categories and mix the family keywords (io-free, no-std, coroutine) with domain words; documentation points at docs.rs and the docs.rs metadata block enables all features with the docsrs cfg (libraries only).
+**cargo-002** (MUST): the description matches the README one-sentence description, with no trailing dot.
 
-Features follow the layered shape: default enables the default TLS provider; client = [] gates the std-blocking client (the blessed std-gating); each TLS feature implies client, selects the pimalaya-stream provider and pulls the optional client-side deps via dep:; vendored forwards to the weak pimalaya-stream dependency.
+**cargo-003** (MUST): the license is always MIT OR Apache-2.0.
 
-Every example gets its own example block with explicit name and path, plus required-features when it needs a gated layer. Dependencies are alphabetical, each with default-features = false and only the needed features enabled, so nothing silently drags std or unused code into the no_std core; layer-specific deps are optional and pulled by the features needing them. Dev-dependencies follow the same discipline.
+**cargo-004** (MUST): io- libraries carry the api-bindings and no-std categories, and mix the family keywords (io-free, no-std, coroutine) with domain words.
 
-Binaries drop the documentation field, the docs.rs metadata block and the no-std category, declare a lib or bin name only when it must differ from the package default, and add the release profile:
+**cargo-005** (MUST): for libraries, documentation points at docs.rs and the docs.rs metadata block enables all features with the docsrs cfg.
+
+**cargo-006** (MUST): features follow the layered shape. default enables the default TLS provider. client = [] gates the std-blocking client, the blessed std-gating. Each TLS feature implies client, selects the pimalaya-stream provider, and pulls the optional client-side deps via dep:. vendored forwards to the weak pimalaya-stream dependency.
+
+**cargo-007** (MUST): every example gets its own example block with explicit name and path, plus required-features when it needs a gated layer.
+
+**cargo-008** (MUST): dependencies are alphabetical, each with default-features = false and only the needed features enabled, so nothing silently drags std or unused code into the no_std core. Layer-specific deps are optional and pulled by the features needing them. Dev-dependencies follow the same discipline.
+
+**cargo-009** (MUST): binaries drop the documentation field, the docs.rs metadata block, and the no-std category. They declare a lib or bin name only when it must differ from the package default, and they add the release profile.
 
 ```toml
 [profile.release]
@@ -313,11 +107,56 @@ strip = "symbols"
 panic = "abort"
 ```
 
-## lib.rs and main.rs headers
+## crate
 
-The lib.rs header (libraries) or main.rs header (binaries) is the equivalent of the retired per-repo ARCHITECTURE.md: a concise document, structured by sections, avoiding dash lists, describing the whole architecture of the crate and linking to inner resources (modules, docs/ files, examples). lib.rs starts with #![no_std], followed by #![cfg_attr(docsrs, feature(doc_cfg))], then a blank line, then the header docs; main.rs starts directly with its header docs, since binaries are std and publish no rustdoc.
+**crate-001** (MUST): #![no_std] is unconditional on libraries, never feature-gated. extern crate alloc; is declared whenever the crate allocates. extern crate std; only when std is genuinely needed, usually behind the client feature.
 
-Libraries never include the README as their rustdoc (no doc attribute including README.md): the README and the lib.rs header are two different documents by design, the public presentation versus the architecture.
+**crate-002** (MUST): deliberately-std utility crates exposing no I/O-free coroutines (pimalaya-stream wrapping TLS providers and sockets, the pimalaya-* helpers) are exempt. They carry no #![no_std] and no extern crates, and their lib.rs opens directly with the docsrs attribute. Their runtime-specific modules are named after the runtime (std today, a sibling tokio tomorrow).
+
+**crate-003** (MUST): the golden rule for feature-gating is that a cargo feature is justified only when it pulls additional crates into the build, std included. The client feature gating the std-blocking client is the canonical example. When gating some code would not change the crate set at all, do not gate it: remove the feature and ship the code unconditionally.
+
+**crate-004** (MUST): imports take from core and alloc as much as possible, and from std only the strict minimum core and alloc cannot provide. They are organised in blocks separated by one empty line, in this order: core, alloc, std, third-party crates, crate. super is never used, in-crate paths always go through crate. Within a block, imports from the same crate are merged into a single use. The only reason for two use declarations on the same crate is a feature gate on one of them.
+
+```rust
+use core::fmt;
+
+use alloc::{string::String, vec::Vec};
+
+#[cfg(feature = "client")]
+use std::io::{Read, Write};
+
+use serde::Deserialize;
+use url::Url;
+
+use crate::rfc6749::state::Oauth20State;
+```
+
+**crate-005** (MUST): compile_error! is banned, and so is any other way of failing the build over a cargo feature combination. A crate never refuses to compile because a feature is missing, redundant, or paired with another. Gate the module or the item on the features it genuinely needs, and let the call site bail! at runtime with a message naming what to enable. A partial build stays usable, the failure reads as a sentence rather than a macro error inside a dependency, and the decision lands where the user can act on it. A crate still carrying a compile_error! feature guard is migrating away from it.
+
+```rust
+// Wrong: the build dies for a combination the caller may not control.
+#[cfg(not(any(feature = "rustls", feature = "native-tls")))]
+compile_error!("Either feature `rustls` or `native-tls` must be enabled");
+
+// Right: the module is gated, and the call site explains itself.
+#[cfg(any(feature = "rustls", feature = "native-tls"))]
+pub mod tls;
+
+#[cfg(not(any(feature = "rustls", feature = "native-tls")))]
+pub fn connect_tls(url: &Url) -> Result<StreamStd> {
+    bail!("Cannot open a TLS connection to `{url}`: this build carries no TLS provider, rebuild with the `rustls-ring`, `rustls-aws` or `native-tls` feature")
+}
+```
+
+**crate-006** (MUST): a feature gate is written once, at the declaration of what it gates. A module declared behind a #[cfg(feature = "x")] never repeats that cfg on the items inside it, nor on that file's own imports, and a #[cfg] never sits on a block inside a function body when it belongs on the item. A second gate inside an already-gated file is noise at best and a bug at worst: it can compile the module to something empty for a caller that enabled exactly the right feature, and nothing reports it.
+
+## header
+
+**header-001** (MUST): the lib.rs header (libraries) or main.rs header (binaries) is the equivalent of the retired per-repo ARCHITECTURE.md. It is a concise document, structured by sections, avoiding dash lists, describing the whole architecture of the crate and linking to inner resources (modules, cairn/ files, examples).
+
+**header-002** (MUST): lib.rs starts with #![no_std], followed by #![cfg_attr(docsrs, feature(doc_cfg))], then a blank line, then the header docs. main.rs starts directly with its header docs, since binaries are std and publish no rustdoc.
+
+**header-003** (MUST): libraries never include the README as their rustdoc (no doc attribute including README.md). The README and the lib.rs header are two different documents by design, the public presentation versus the architecture.
 
 ```rust
 #![no_std]
@@ -335,37 +174,13 @@ Libraries never include the README as their rustdoc (no doc attribute including 
 //! RFC number is the version discriminator. [...]
 ```
 
-## Crate setup and imports
+## inline
 
-#![no_std] is unconditional on libraries, never feature-gated. extern crate alloc; is declared whenever the crate allocates, and extern crate std; only when std is genuinely needed, usually behind the client feature.
+**inline-001** (MUST): each module has header docs composed of a title, one or two lines describing the module, and more paragraphs when needed, for extra details, its place in the codebase, and its relations with other components.
 
-Deliberately-std utility crates exposing no I/O-free coroutines (pimalaya-stream wrapping TLS providers and sockets, the pimalaya-* helpers) are exempt: no #![no_std], no extern crates, and their lib.rs opens directly with the docsrs attribute; their runtime-specific modules are named after the runtime (std today, a sibling tokio tomorrow).
+**inline-002** (MUST): each pub item (type, struct, enum, function, const, field) has at least one or two lines of description, followed by paragraphs when needed. Comments and inline docs wrap at 80 columns. Docs on shared APIs stay protocol-agnostic, and per-protocol nuance goes on the protocol-specific items.
 
-The golden rule for feature-gating: a cargo feature is justified only when it pulls additional crates into the build, std included: the client feature gating the std-blocking client is the canonical example. When gating some code would not change the crate set at all, do not gate it: remove the feature and ship the code unconditionally.
-
-Imports take from core and alloc as much as possible, and from std only the strict minimum core and alloc cannot provide. They are organized in blocks separated by one empty line, in this order: core, alloc, std, third-party crates, crate; super is never used, in-crate paths always go through crate. Within a block, imports from the same crate are merged into a single use; the only reason for two use declarations on the same crate is a feature gate on one of them.
-
-```rust
-use core::fmt;
-
-use alloc::{string::String, vec::Vec};
-
-#[cfg(feature = "client")]
-use std::io::{Read, Write};
-
-use serde::Deserialize;
-use url::Url;
-
-use crate::rfc6749::state::Oauth20State;
-```
-
-## Inline docs
-
-Each module has header docs composed of a title, one or two lines describing the module, and more paragraphs when needed: extra details, its place in the codebase, its relations with other components.
-
-Each pub item (type, struct, enum, function, const, field) has at least one or two lines of description, followed by paragraphs when needed. Comments and inline docs wrap at 80 columns. Docs on shared APIs stay protocol-agnostic; per-protocol nuance goes on the protocol-specific items.
-
-No empty lines between enum variants or struct fields: the doc comment of each item is separator enough. Blank lines keep separating methods and other items.
+**inline-003** (MUST): no empty lines between enum variants or struct fields. The doc comment of each item is separator enough. Blank lines keep separating methods and other items.
 
 ```rust
 //! Access token request (RFC 6749 section 4.1.3).
@@ -381,15 +196,19 @@ No empty lines between enum variants or struct fields: the doc comment of each i
 pub struct ExampleRequestAccessTokenParams { /* ... */ }
 ```
 
-Avoid in-code // comments: code should be clear enough on its own. When a situation is genuinely non-obvious, prefix the comment with one of these five tags, and no other: NOTE (a non-obvious fact the next reader needs: constraint, invariant, spec quirk), TODO (deferred work, the code is correct meanwhile), FIXME (known-wrong or fragile, needs repair), HACK (a deliberate workaround kept on purpose), SAFETY (justification above an unsafe block, the official Rust convention enforced by clippy's undocumented_unsafe_blocks lint).
+**inline-004** (MUST): avoid in-code // comments, since code should be clear enough on its own. When a situation is genuinely non-obvious, prefix the comment with one of these five tags, and no other: NOTE (a non-obvious fact the next reader needs: constraint, invariant, spec quirk), TODO (deferred work, the code is correct meanwhile), FIXME (known-wrong or fragile, needs repair), HACK (a deliberate workaround kept on purpose), SAFETY (justification above an unsafe block, the official Rust convention enforced by clippy's undocumented_unsafe_blocks lint).
 
-Structural section separators (dashed // banners) are banned. When an impl block grows too big to navigate, split it into several impl blocks, each introduced by its own doc comment; or split the module into several files; or, in extreme cases, generate the repetitive parts with a macro.
+**inline-005** (MUST): structural section separators (dashed // banners) are banned. When an impl block grows too big to navigate, split it into several impl blocks, each introduced by its own doc comment, or split the module into several files, or, in extreme cases, generate the repetitive parts with a macro.
 
-CLI crates document every pub item because clap renders doc comments as the CLI help: the first paragraph (two lines max) is what -h shows, the following paragraphs complete the --help page.
+**inline-006** (MUST): CLI crates document every pub item, because clap renders doc comments as the CLI help. The first paragraph (two lines max) is what -h shows. The following paragraphs complete the --help page.
 
-## Logging
+## logging
 
-Libraries only use debug and trace; warn exceptionally, error in really rare cases. debug marks the beginning and the end of a function or coroutine, tracking where the code goes, and is usually followed by a trace carrying the input or output data; trace covers the steps inside the execution. In a coroutine, never log at the beginning of the resume loop, it only produces noise: log when the state changes, at the end of match arms for example, carrying the data in a trace when applicable. Messages carry no prefix, the log crate already provides the module path; they start lowercase and take no trailing dot.
+**logging-001** (MUST): libraries only use debug and trace, warn exceptionally, error in really rare cases. debug marks the beginning and the end of a function or coroutine, tracking where the code goes, and is usually followed by a trace carrying the input or output data. trace covers the steps inside the execution.
+
+**logging-002** (MUST): in a coroutine, never log at the beginning of the resume loop, since it only produces noise. Log when the state changes, at the end of match arms for example, carrying the data in a trace when applicable.
+
+**logging-003** (MUST): messages carry no prefix, since the log crate already provides the module path. They start lowercase and take no trailing dot.
 
 ```rust
 pub fn compose(&self, email: &str) -> Result<Vec<ServiceConfig>> {
@@ -404,33 +223,250 @@ pub fn compose(&self, email: &str) -> Result<Vec<ServiceConfig>> {
 }
 ```
 
-Applications additionally use info when performing an action. debug and trace remain for app-specific internals (config loading, UI) with the same rules in mind: debug at beginning and end, often followed by a trace with input or output, trace for in-process operations. warn signals something definitely wrong, not crucial, that the user can fix; anything else stays trace. error is reserved for parallel operations that must not fail fast, parallel discovery being the canonical example: one mechanism erroring is logged while the others continue. It flags something that went wrong, never a mechanism that gracefully discovered nothing, which is trace.
+**logging-004** (MUST): applications additionally use info when performing an action. debug and trace remain for app-specific internals (config loading, UI) with the same rules in mind: debug at beginning and end, often followed by a trace with input or output, trace for in-process operations. warn signals something definitely wrong, not crucial, that the user can fix. Anything else stays trace. error is reserved for parallel operations that must not fail fast, parallel discovery being the canonical example: one mechanism erroring is logged while the others continue. error flags something that went wrong, never a mechanism that gracefully discovered nothing, which is trace.
 
-## Naming conventions
+## naming
 
-Crates: I/O-free libraries carry the io- prefix (io-pim- when the domain is the PIM lowest common denominator, like io-pim-discovery). Important cross-library CLIs get their own repository; smaller ones ship as an in-repo cli feature, off by default.
+**naming-001** (MUST): I/O-free libraries carry the io- prefix, and io-pim- when the domain is the PIM lowest common denominator, like io-pim-discovery. Important cross-library CLIs get their own repository. Smaller ones ship as an in-repo cli feature, off by default.
 
-Files and modules: snake_case everywhere, kebab-case is banned, no #[path] attributes. The mod.rs choice is content-based: a pure aggregator (only mod declarations and re-exports) lives in foo/mod.rs; a module with code of its own is a sibling foo.rs next to the foo/ folder; never both foo/mod.rs and foo/foo.rs.
+**naming-002** (MUST): files and modules are snake_case everywhere. kebab-case is banned, and #[path] attributes are banned. The mod.rs choice is content-based: a pure aggregator (only mod declarations and re-exports) lives in foo/mod.rs, and a module with code of its own is a sibling foo.rs next to the foo/ folder. Never both foo/mod.rs and foo/foo.rs.
 
-Source tree (libraries): the tree mirrors how the specification itself is organized, as closely as possible. Standardized domains are structured by RFC, one module per RFC (OAuth, IMAP, SMTP); provider APIs are structured by API version (Gmail, Microsoft Graph), scoped by domain below the version when the API reference does so (Gmail: v1 then users). Everything inside is flattened, and code reused by several modules lives at the crate root: the client module spanning the RFC modules is the canonical example.
+**naming-003** (MUST): the source tree of a library mirrors how the specification itself is organised, as closely as possible. Standardized domains are structured by RFC, one module per RFC (OAuth, IMAP, SMTP). Provider APIs are structured by API version (Gmail, Microsoft Graph), scoped by domain below the version when the API reference does so (Gmail: v1 then users). Everything inside is flattened, and code reused by several modules lives at the crate root. The client module spanning the RFC modules is the canonical example.
 
-Public API paths: no re-exports at the crate root; consumers use module-qualified paths. One blessed exception: io-imap re-exports the foreign imap-types and imap-codec crates it is built on, locking their versions and smoothing onboarding.
+**naming-004** (MUST): there are no re-exports at the crate root, and consumers use module-qualified paths. One blessed exception: io-imap re-exports the foreign imap-types and imap-codec crates it is built on, locking their versions and smoothing onboarding.
 
-Types live inside the module they belong to, preferably one module per domain or group of types from the same area, split per subdomain when it grows too big. A types (or utils) submodule stays private and is flattened into its parent with a doc-inlined pub use, so callers keep the domain::Type path. When the submodule holds several types, each type lives in its own file together with its impls: one private module per type under the types folder, re-exported doc-inlined from the aggregator, so the file granularity never shows in the public path.
+**naming-005** (MUST): types live next to the code that owns them, never in a types catch-all module and never behind a private mod types plus a doc-inlined pub use re-export (that flatten is retired). A type attached to a single coroutine or function, its Params, Options, Response, Error and other companions, lives in that coroutine's own file. A type used independently by several coroutines or functions gets its own public module file, named after the type or its family: one file per type by default, one file per family when the per-type split would be too granular or the API design groups them. The module name is part of the public path, exactly like io-oauth's rfc6749::state::Oauth20State (the state module holds the shared CSRF value), and no re-export hides it. A module that carries its own shared types is the sibling foo.rs next to its foo/ folder, holding those types plus the pub mod declarations. A folder whose mod.rs only aggregates stays a pure aggregator.
 
-Public items follow the `<Domain><Target><Verb><Ext>` pattern, reading from the largest scope down to the narrowest (`ImapMailboxCreate`: Imap > Mailbox > Create; its error is `ImapMailboxCreateError`):
+**naming-006** (MUST): public items follow the `<Domain><Target><Verb><Ext>` pattern, reading from the largest scope down to the narrowest (`ImapMailboxCreate`: Imap then Mailbox then Create, its error `ImapMailboxCreateError`). Domain is the library or protocol scope, version-scoped when the protocol is versioned (`Oauth20`, `Http11`), bare otherwise (`Imap`, `Smtp`). Target is what the item is about (`Mailbox`, `Client`, `Message`). Verb is only for coroutines, functions performing an action, and their direct derivates (`Create`, `List`, `Fetch`, `Send`): it comes after the target, and the target is omitted when the action applies to the whole exchange (`ImapSend`, `Http11Send`). Ext is for derivates like `Error`, `Result`, `Params`, `Options`, `Yield`, `State`, `Stream`.
 
-- Domain: the library or protocol scope, version-scoped when the protocol is versioned (`Oauth20`, `Http11`), bare otherwise (`Imap`, `Smtp`). The prefix is strict: every pub item carries it. The only exception is types re-exported from a foreign crate, which keep their upstream names.
-- Target: what the item is about (`Mailbox`, `Client`, `Message`).
-- Verb: only for coroutines, functions performing an action, and their direct derivates (`Create`, `List`, `Fetch`, `Send`); it comes after the target, and the target is omitted when the action applies to the whole exchange (`ImapSend`, `Http11Send`).
-- Ext: for derivates like `Error`, `Result`, `Params`, `Options`, `Yield`, `State`, `Stream`.
-- Pure data objects have no verb, so it is omitted (`Oauth20ClientSource`, `Oauth20AccessTokenSuccessParams`); this only applies to objects standing free of any single coroutine, typically spec-defined wire shapes shared across exchanges.
-- Companions mirror their parent's target and verb: the error of `ImapMailboxCreate` is `ImapMailboxCreateError`, never `ImapCreateMailboxError`. Data companions follow the same rule (`ImapMailboxSelectData`, `GmailMessagesListParams`): data directly related to one coroutine never drops the verb.
-- Identifiers shorten authorization to auth, but RFC wire tokens are never renamed: the authorization_pending error code keeps its spelling.
-- Std clients spanning several RFC modules live in a crate-root client module, keep the version-scoped type name (`Oauth20ClientStd`) and version-less methods; a future protocol version adds a sibling client, unified behind a version-agnostic wrapper only once one exists.
+**naming-007** (MUST): the Domain prefix is strict, and every pub item carries it. Two exceptions: types re-exported from a foreign crate keep their upstream names, and the shared std toolkit crates (pimalaya-stream, pimalaya-cli, pimalaya-config) are exempt, since the crate name and module path already namespace them (`pimalaya_cli::printer::StdoutPrinter`, `pimalaya_stream::StreamStd`).
 
-Messages: log macro messages start lowercase; user-facing error messages start with a capital; neither carries a trailing dot.
+**naming-008** (MUST): pure data objects have no verb, so it is omitted (`Oauth20ClientSource`, `Oauth20AccessTokenSuccessParams`). This applies only to objects standing free of any single coroutine, typically spec-defined wire shapes shared across exchanges.
 
+**naming-009** (MUST): companions mirror their parent's target and verb. The error of `ImapMailboxCreate` is `ImapMailboxCreateError`, never `ImapCreateMailboxError`. Data companions follow the same rule (`ImapMailboxSelectData`, `GmailMessagesListParams`): data directly related to one coroutine never drops the verb.
+
+**naming-010** (MUST): identifiers shorten authorization to auth, but RFC wire tokens are never renamed. The authorization_pending error code keeps its spelling.
+
+**naming-011** (MUST): std clients spanning several RFC modules live in a crate-root client module, keep the version-scoped type name (`Oauth20ClientStd`) and version-less methods. A future protocol version adds a sibling client, unified behind a version-agnostic wrapper only once one exists.
+
+**naming-012** (MUST): log macro messages start lowercase. User-facing error messages start with a capital. Neither carries a trailing dot.
+
+# Markdown
+
+## markdown
+
+Rules applying to every markdown file (README, CONTRIBUTING, CHANGELOG, cairn/).
+
+**markdown-001** (MUST): never hard-wrap. Each paragraph or bullet stays on one long line, and editors soft-wrap.
+
+**markdown-002** (MUST): no em dashes. Prefer short, separate sentences over both dashes and semicolons. Use a semicolon only when two clauses are too tightly linked to split into sentences. A colon may still introduce.
+
+**markdown-003** (MUST): file and path references are written bare (config.sample.toml) or as a markdown link, never wrapped in backticks. Backticks are for code identifiers a user types or sets, such as flags, feature names and config keys, and those are allowed inline everywhere, including the README (see readme-002).
+
+**markdown-004** (MUST): shell command blocks are fenced with sh, not bash nor shell.
+
+**markdown-005** (SHOULD): stay concise yet precise, with signal-dense sentences carrying the subject, the operation, and the reason. No marketing prose, no motivation paragraphs. Prefer paragraphs over dash lists in prose. Lists are for genuinely enumerable content.
+
+## readme
+
+**readme-001** (MUST): the README is the public documentation. It exists for users to understand what the library or application does and how to get it.
+
+**readme-002** (MUST): the README carries no code. That means no API snippets a reader would paste into a program, no type or function signatures, and no library usage examples: that technical documentation belongs on docs.rs (autogenerated from the inline docs) and behind --help for CLIs. Backticks are not code: naming a user-facing token inline is fine and encouraged, a CLI flag (`--json`), a cargo feature (`rustls-ring`), a config key, a URL scheme, since these are things a user types or sets rather than an API to document. Shell blocks for installation and a few real command lines are expected for CLIs (see readme-012). The one place real configuration code appears is an application's provider recipes (see readme-011).
+
+**readme-003** (MUST): the header has two flavours, picked by whether logo.svg exists at the repo root, and never mixed. The HTML flavour is only for the flagship binaries shipping a logo (himalaya, himalaya-tui, neverest). A screenshot goes right under it, and an optional caution or warning callout flags pre-stable status.
+
+```html
+<div align="center">
+  <img src="./logo.svg" alt="Logo" width="128" height="128" />
+  <h1><Icon> <Name></h1>
+  <p><One-line tagline></p>
+  <p>
+    <a href="https://matrix.to/#/#pimalaya:matrix.org"><img alt="Matrix" src="https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white"/></a>
+    <a href="https://fosstodon.org/@pimalaya"><img alt="Mastodon" src="https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white"/></a>
+  </p>
+</div>
+```
+
+**readme-004** (MUST): the markdown flavour is for every other repo. The docs.rs badge comes first and is skipped when no library is published on crates.io.
+
+```markdown
+# <Maybe icon> <Name> [![Documentation](https://img.shields.io/docsrs/<crate>?style=flat&logo=docs.rs&logoColor=white)](https://docs.rs/<crate>/latest/<crate>) [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya)
+
+<One-sentence description without trailing dot>
+```
+
+**readme-005** (SHOULD): for io- libraries the description may be followed by the layers block, adjusted to the layers the crate actually ships.
+
+```markdown
+This library is composed of 3 feature-gated layers:
+
+- Low-level **I/O-free** coroutines: no_std-compatible state machines containing the whole <domain> logic, usable anywhere
+- Mid-level **light client**: a standard, blocking client wrapping a stream you opened yourself
+- High-level **full client**: the light client plus TCP connections and TLS negotiations handled for you
+```
+
+**readme-006** (MUST): binaries with a visible interface show it between the one-line description and the table of contents: the flagship binaries above and every GUI application. A single centered screenshot suits a single screen. An application with several screens uses a horizontally scrolling row instead. Screenshots live in a screenshots/ folder at the repository root. Libraries ship no screenshot. The scrolling row is a plain HTML table, one screenshot per column in a single row, each image given a fixed pixel width so the combined width overflows the README column and GitHub renders a horizontal scrollbar rather than wrapping onto a second line.
+
+```html
+<table><tr>
+<td><img src="screenshots/first.png" width="200" alt="<what the screen shows>" /></td>
+<td><img src="screenshots/second.png" width="200" alt="<what the screen shows>" /></td>
+</tr></table>
+```
+
+**readme-007** (MUST): sections appear in order. Libraries: Table of contents, Features, RFC coverage, Usage, Examples, License, Social, Sponsoring. CLIs and TUIs: Table of contents, Features, RFC or API coverage (when meaningful), Installation, Configuration, Usage, License, Social, Sponsoring. AI policy and Contributing carry no section of their own: they exist only as table of contents entries linking out (see readme-013), placed where their section used to sit, AI policy before License and Contributing between Social and Sponsoring. When the tool targets named providers, the Configuration section gains one subsection per provider, each nested under Configuration in the table of contents.
+
+**readme-008** (MUST): the Features section has one bullet per feature, two lines max each, worded for users rather than implementers. No RFC references, since they belong to the coverage section.
+
+```markdown
+- **Device authorization grant**: sign in by typing a short code on another device, for hosts without a browser.
+```
+
+The TLS support block keeps this exact shape, and the section closes with the tip callout when the crate uses cargo features.
+
+```markdown
+- Full standard, blocking client with **TLS** support:
+  - [Rustls](https://crates.io/crates/rustls) with ring crypto (requires `rustls-ring` feature, enabled by default)
+  - [Rustls](https://crates.io/crates/rustls) with aws crypto (requires `rustls-aws` feature)
+  - [Native TLS](https://crates.io/crates/native-tls) (requires `native-tls` feature)
+```
+
+**readme-009** (MUST): the RFC or API coverage section states what the crate supports in protocol terms, each RFC (or provider API) linked, with no code identifiers, just an explanation of what is covered.
+
+```markdown
+| RFC    | What is covered                                                                             |
+|--------|---------------------------------------------------------------------------------------------|
+| [6749] | The OAuth 2.0 framework: authorization code grant, client credentials grant, token issuance and refresh |
+| [7591] | Dynamic client registration: register a public client without any provider console          |
+
+[6749]: https://www.rfc-editor.org/rfc/rfc6749
+[7591]: https://www.rfc-editor.org/rfc/rfc7591
+```
+
+**readme-010** (MUST): for CLIs and TUIs, Installation subsections appear in order: Pre-built binary, Cargo, Nix, Sources. Configuration describes the wizard behavior when one exists, then the canonical config paths and overrides, linking to config.sample.toml for the full field reference.
+
+```markdown
+A configuration is loaded from the first valid path among:
+
+- $XDG_CONFIG_HOME/<name>/config.toml
+- $HOME/.config/<name>/config.toml
+- $HOME/.<name>rc
+
+Override the path with -c <PATH> or <NAME>_CONFIG=<PATH>. Multiple paths can be passed at once, separated by :. The first one is the base and the rest are deep-merged on top. The full field reference lives in [config.sample.toml](./config.sample.toml).
+```
+
+**readme-011** (MUST): when the tool targets named providers whose setup discovery cannot fully automate, the Configuration section gains one subsection per provider, each listed (nested under Configuration) in the table of contents. The subsection carries that provider's ready-made configuration block (endpoints, scopes, and a public client where one exists) as a fenced toml snippet, plus the caveats that setup trips over. This is the one place a README carries configuration code: the recipes render on the repository page and stay in a single source of truth, while config.sample.toml keeps only the annotated field skeleton and points here for the per-provider blocks.
+
+**readme-012** (MUST): Usage and Examples are redirects, not manuals. Usage points to docs.rs for libraries and to --help for CLIs (which may inline a few real-world command lines). Examples points to the examples folder and to tests when they demonstrate usage.
+
+```markdown
+## Usage
+
+The whole API is documented on [docs.rs](https://docs.rs/<crate>/latest/<crate>), including runnable snippets for every coroutine and client.
+
+## Examples
+
+Complete runnable programs live in [./examples](./examples); the tests also demonstrate real usage.
+```
+
+**readme-013** (MUST): the AI policy and the contributing guide live once at the org level and are never restated in a repository. The README carries them as table of contents entries only, each linking straight to the org file, so the reader sees they exist without the user guide carrying meta content. Contributing points at the repository's own CONTRIBUTING.md when it ships one (see contributing-002), at the org guide otherwise.
+
+```markdown
+- [AI policy](https://github.com/pimalaya/.github/blob/master/AI_POLICY.md)
+- [License](#license)
+- [Social](#social)
+- [Contributing](./CONTRIBUTING.md)
+- [Sponsoring](#sponsoring)
+```
+
+**readme-014** (MUST): License and Social are byte-identical across repos, and License states the dual licensing by linking both files with no further prose.
+
+```markdown
 ## License
 
-Every crate, library and application alike, is dual-licensed MIT OR Apache-2.0, with LICENSE-MIT and LICENSE-APACHE at the repository root and no per-file license headers. AGPL is retired; repositories still carrying it migrate back to the dual license.
+This project is licensed under either of:
+
+- [MIT license](LICENSE-MIT)
+- [Apache License, Version 2.0](LICENSE-APACHE)
+
+## Social
+
+- Chat on [Matrix](https://matrix.to/#/#pimalaya:matrix.org)
+- News on [Mastodon](https://fosstodon.org/@pimalaya) or [RSS](https://fosstodon.org/@pimalaya.rss)
+- Mail at [pimalaya.org@posteo.net](mailto:pimalaya.org@posteo.net)
+```
+
+**readme-015** (MUST): Sponsoring closes the README with the NLnet banner, the year-by-year grant list (2022 to 2023 NGI Assure, 2023 to 2024 NGI Zero Entrust, 2024 to 2026 NGI Zero Core, 2026 to 2027 NGI Zero Commons Fund), then the six donation badges (GitHub Sponsors, Ko-fi, Buy Me a Coffee, Liberapay, thanks.dev, PayPal). The block is byte-identical across repos. Copy it from an existing README rather than retyping it.
+
+## contributing
+
+**contributing-001** (MUST): the standard contributing guide lives once at the org level, in [.github/CONTRIBUTING.md](./CONTRIBUTING.md). GitHub serves it as the default for every repository that does not ship its own. It covers the reading order (Pimalaya README, then the org guides, then the local docs), the Nix development environment, the layered build checks, lint, test, audit, dependency overrides, and the commit style.
+
+**contributing-002** (MUST): a repository adds its own CONTRIBUTING.md only when something differs from the standard, and that file documents only the differences, opening with the same reading order.
+
+```markdown
+# Contributing guide
+
+Thank you for investing your time in contributing to <Name>.
+
+Whether you are a human or an AI agent, read these in order before touching the code:
+
+1. the [Pimalaya README](https://github.com/pimalaya) for what the project is and how its repositories stack;
+2. the [Pimalaya CONTRIBUTING](https://github.com/pimalaya/.github/blob/master/CONTRIBUTING.md) guide, which chains to the shared architecture and guidelines;
+3. the inline header documentation, starting with src/lib.rs (or src/main.rs): it is the architecture document of this crate;
+4. the cairn/ folder for the development history and living plans (the Cairn convention: spec/, changes/, log/).
+
+Everything below documents only what differs from the Pimalaya standards.
+
+## <Repo-specific section, e.g. the feature matrix to build against>
+```
+
+## changelog
+
+**changelog-001** (MUST): the CHANGELOG uses the Keep a Changelog 1.0.0 format with SemVer, entries grouped under Added, Changed, Fixed, Removed. Each item is a one-line (two max) past-tense summary of the change. When more context is needed, an indented paragraph follows after a blank line.
+
+**changelog-002** (MUST): a release section reports the net changes relative to the previous version, not a complete history log. Interior churn is folded into final-state entries, and history belongs to the cairn/ log.
+
+```markdown
+## [Unreleased]
+
+### Added
+
+- Added the `grant` account config field.
+
+  Selects the OAuth 2.0 grant flow run by the auth commands; defaults to `authorization-code`, the previous implicit behavior.
+
+### Changed
+
+- Enabled PKCE by default with the S256 method, aligning with OAuth 2.1.
+```
+
+## cairn
+
+**cairn-001** (MUST): the cairn/ folder is the development memory of the repository, used by AI agents and humans to track what is done during development. It follows the Cairn convention (github.com/pimalaya/cairn), which supersedes the former docs/ folder. spec/ holds the current design as one file per capability, the living truth. changes/ holds in-flight proposals, each a folder with a proposal, a task list, and a spec delta. log/ holds the dated history, one entry per landed change. A landed change is folded into spec/ and logged, so the spec always reflects current truth and nothing is lost. The activation stanza lives in AGENTS.md at the repository root, and cairn/verify.sh checks conformance.
+
+```text
+cairn/
+  spec/       current design, one file per capability
+  changes/    in-flight proposals, one folder each (proposal, tasks, delta)
+  log/        dated history, one entry per landed change
+  verify.sh   conformance checker (optional, vendored from pimalaya/cairn)
+```
+
+# Audit
+
+## tests
+
+**tests-001** (MUST): tests are never adjusted to fit AI-generated code. The code is adjusted to fit correct behaviour, verified against the relevant RFC or upstream spec.
+
+More test conventions (layout, naming, coverage expectations) are added here as they settle, so a repository can be checked against them.
+
+## security
+
+**security-001** (MUST): when applicable, SECURITY.md carries a Supported Versions table reflecting the current version line, and a Reporting a Vulnerability section pointing at the repository's issue tracker or a private contact.
+
+## license
+
+**license-001** (MUST): every crate, library and application alike, is dual-licensed MIT OR Apache-2.0, with LICENSE-MIT and LICENSE-APACHE at the repository root and no per-file license headers.
+
+**license-002** (MUST): AGPL is retired. A repository still carrying it migrates back to the dual license.
