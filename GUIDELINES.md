@@ -18,7 +18,7 @@ Ask to check a repository against specific ids (`readme-003`, `naming-007`), aga
 
 ## Table of contents
 
-- Code: [repo](#repo), [commits](#commits), [nix](#nix), [cargo](#cargo), [crate](#crate), [header](#header), [inline](#inline), [logging](#logging), [naming](#naming)
+- Code: [repo](#repo), [commits](#commits), [nix](#nix), [cargo](#cargo), [crate](#crate), [header](#header), [inline](#inline), [logging](#logging), [naming](#naming), [cli](#cli)
 - Markdown: [markdown](#markdown), [readme](#readme), [contributing](#contributing), [changelog](#changelog), [cairn](#cairn)
 - Audit: [tests](#tests), [security](#security), [license](#license)
 
@@ -111,7 +111,7 @@ panic = "abort"
 
 **crate-001** (MUST): #![no_std] is unconditional on libraries, never feature-gated. extern crate alloc; is declared whenever the crate allocates. extern crate std; only when std is genuinely needed, usually behind the client feature.
 
-**crate-002** (MUST): deliberately-std utility crates exposing no I/O-free coroutines (pimalaya-stream wrapping TLS providers and sockets, the pimalaya-* helpers) are exempt. They carry no #![no_std] and no extern crates, and their lib.rs opens directly with the docsrs attribute. Their runtime-specific modules are named after the runtime (std today, a sibling tokio tomorrow).
+**crate-002** (MUST): deliberately-std utility crates exposing no I/O-free coroutines (pimalaya-stream wrapping TLS providers and sockets, the pimalaya-* helpers) are exempt. They carry no #![no_std] and no extern crates, and their lib.rs opens directly with the docsrs attribute. Their modules sit flat at the crate root, and a runtime-named module (std, tokio) is only introduced the day two runtimes genuinely coexist.
 
 **crate-003** (MUST): the golden rule for feature-gating is that a cargo feature is justified only when it pulls additional crates into the build, std included. The client feature gating the std-blocking client is the canonical example. When gating some code would not change the crate set at all, do not gate it: remove the feature and ship the code unconditionally.
 
@@ -154,6 +154,8 @@ pub fn connect_tls(url: &Url) -> Result<StreamStd> {
 
 **header-001** (MUST): the lib.rs header (libraries) or main.rs header (binaries) is the equivalent of the retired per-repo ARCHITECTURE.md. It is a concise document, structured by sections, avoiding dash lists, describing the whole architecture of the crate and linking to inner resources (modules, cairn/ files, examples).
 
+**header-004** (MUST): the architecture header obeys inline-001's four-line paragraphs like every other header, and nothing else about it shrinks. Trimming it means denser paragraphs, never fewer sections: it is the one document carrying what a reader cannot recover from the code, so a section is compressed or it stays as it is, never dropped. The test per paragraph is whether a competent reader who does not know the crate still learns the same architectural fact from the shorter version. When the fact is gone rather than compressed, the cut went too far.
+
 **header-002** (MUST): lib.rs starts with #![no_std], followed by #![cfg_attr(docsrs, feature(doc_cfg))], then a blank line, then the header docs. main.rs starts directly with its header docs, since binaries are std and publish no rustdoc.
 
 **header-003** (MUST): libraries never include the README as their rustdoc (no doc attribute including README.md). The README and the lib.rs header are two different documents by design, the public presentation versus the architecture.
@@ -176,18 +178,20 @@ pub fn connect_tls(url: &Url) -> Result<StreamStd> {
 
 ## inline
 
-**inline-001** (MUST): each module has header docs composed of a title, one or two lines describing the module, and more paragraphs when needed, for extra details, its place in the codebase, and its relations with other components.
+**inline-001** (MUST): each module opens its header docs with a markdown title (`//! # Title`), then one or two sentences saying what the module is. Two is the maximum, not a target. Further paragraphs follow only when genuinely needed, for its place in the codebase and its relations with other components, and each of them is at most four lines. A paragraph reaching for a fifth line is not concise enough: cut it rather than rewrap it.
 
-**inline-002** (MUST): each pub item (type, struct, enum, function, const, field) has at least one or two lines of description, followed by paragraphs when needed. Comments and inline docs wrap at 80 columns. Docs on shared APIs stay protocol-agnostic, and per-protocol nuance goes on the protocol-specific items.
+**inline-002** (MUST): each pub item (type, struct, enum, function, const, field, variant) is documented by one summary line. That is the ceiling, not a floor. When one line genuinely cannot carry it, a blank doc line follows, then at most three further lines. Comments and inline docs wrap at 80 columns. Docs on shared APIs stay protocol-agnostic, and per-protocol nuance goes on the protocol-specific items.
 
 **inline-003** (MUST): no empty lines between enum variants or struct fields. The doc comment of each item is separator enough. Blank lines keep separating methods and other items.
 
 ```rust
-//! Access token request (RFC 6749 section 4.1.3).
+//! # Access token request
 //!
 //! Exchanges an authorization code for an access token against the
-//! token endpoint. Consumed by the authorization code grant, next to
-//! the auth request and auth response modules.
+//! token endpoint (RFC 6749 section 4.1.3).
+//!
+//! Consumed by the authorization code grant, next to the auth request
+//! and auth response modules.
 
 /// The parameters of the access token request.
 ///
@@ -196,11 +200,15 @@ pub fn connect_tls(url: &Url) -> Result<StreamStd> {
 pub struct ExampleRequestAccessTokenParams { /* ... */ }
 ```
 
-**inline-004** (MUST): avoid in-code // comments, since code should be clear enough on its own. When a situation is genuinely non-obvious, prefix the comment with one of these five tags, and no other: NOTE (a non-obvious fact the next reader needs: constraint, invariant, spec quirk), TODO (deferred work, the code is correct meanwhile), FIXME (known-wrong or fragile, needs repair), HACK (a deliberate workaround kept on purpose), SAFETY (justification above an unsafe block, the official Rust convention enforced by clippy's undocumented_unsafe_blocks lint).
+**inline-004** (MUST): avoid in-code // comments, since code should be clear enough on its own. When a situation is genuinely non-obvious, prefix the comment with one of these five tags, and no other: NOTE (a non-obvious fact the next reader needs: constraint, invariant, spec quirk), TODO (deferred work, the code is correct meanwhile), FIXME (known-wrong or fragile, needs repair), HACK (a deliberate workaround kept on purpose), SAFETY (justification above an unsafe block, the official Rust convention enforced by clippy's undocumented_unsafe_blocks lint). A tag is not a licence to annotate: NOTE earns its place only where a competent reader of the surrounding code would otherwise get it wrong, which is rare, and the first move when one feels necessary is to make the code say it instead. Fixing a bug is not by itself such a case: the reasoning behind a fix belongs in the commit message, the changelog and the Cairn log, not beside the line that changed, where it decays into narration of a defect nobody can see any more.
 
 **inline-005** (MUST): structural section separators (dashed // banners) are banned. When an impl block grows too big to navigate, split it into several impl blocks, each introduced by its own doc comment, or split the module into several files, or, in extreme cases, generate the repetitive parts with a macro.
 
-**inline-006** (MUST): CLI crates document every pub item, because clap renders doc comments as the CLI help. The first paragraph (two lines max) is what -h shows. The following paragraphs complete the --help page.
+**inline-006** (MUST): CLI crates document every pub item, because clap renders doc comments as the CLI help. The first paragraph (two lines max) is what -h shows. The following paragraphs complete the --help page. Such docs are the user interface rather than developer documentation, so they are the one exception to inline-002's ceiling: the summary line stays genuinely short and padding is cut as hard as anywhere else, but help a user needs to operate the command is never amputated to fit three lines. An exit-code table, a flag that can discard data, and the contract of a command a configuration names all earn their length.
+
+**inline-007** (MUST): a commented sample configuration (config.sample.toml and friends) documents each key the way inline-002 documents a pub item: one line, then at most three more when one cannot carry it. It is read by someone setting the tool up, so the gotchas stay, a default that is not obvious first among them, while the essay around them goes.
+
+**inline-008** (MUST): the ceilings above cut length, never reasons. Every comment answers one of two questions, and they are not worth the same: what the code does, which the code already says and which therefore goes, and why it is the way it is, which nothing else records. A bug a line prevents, an invariant two layers depend on, an RFC requirement, why the tempting simpler thing is wrong: that is compressed to the ceiling, and where it truly cannot fit, the sharpest sentence survives alone and the rest goes. Deleting a why to meet a line count is a regression even though nothing compiles differently.
 
 ## logging
 
@@ -239,7 +247,7 @@ pub fn compose(&self, email: &str) -> Result<Vec<ServiceConfig>> {
 
 **naming-006** (MUST): public items follow the `<Domain><Target><Verb><Ext>` pattern, reading from the largest scope down to the narrowest (`ImapMailboxCreate`: Imap then Mailbox then Create, its error `ImapMailboxCreateError`). Domain is the library or protocol scope, version-scoped when the protocol is versioned (`Oauth20`, `Http11`), bare otherwise (`Imap`, `Smtp`). Target is what the item is about (`Mailbox`, `Client`, `Message`). Verb is only for coroutines, functions performing an action, and their direct derivates (`Create`, `List`, `Fetch`, `Send`): it comes after the target, and the target is omitted when the action applies to the whole exchange (`ImapSend`, `Http11Send`). Ext is for derivates like `Error`, `Result`, `Params`, `Options`, `Yield`, `State`, `Stream`.
 
-**naming-007** (MUST): the Domain prefix is strict, and every pub item carries it. Two exceptions: types re-exported from a foreign crate keep their upstream names, and the shared std toolkit crates (pimalaya-stream, pimalaya-cli, pimalaya-config) are exempt, since the crate name and module path already namespace them (`pimalaya_cli::printer::StdoutPrinter`, `pimalaya_stream::StreamStd`).
+**naming-007** (MUST): the Domain prefix is strict, and every pub item carries it. Two exceptions: types re-exported from a foreign crate keep their upstream names, and the shared std toolkit crates (pimalaya-stream, pimalaya-cli, pimalaya-config) are exempt, since the crate name and module path already namespace them (`pimalaya_cli::printer::StdoutPrinter`, `pimalaya_stream::stream::Stream`).
 
 **naming-008** (MUST): pure data objects have no verb, so it is omitted (`Oauth20ClientSource`, `Oauth20AccessTokenSuccessParams`). This applies only to objects standing free of any single coroutine, typically spec-defined wire shapes shared across exchanges.
 
@@ -250,6 +258,26 @@ pub fn compose(&self, email: &str) -> Result<Vec<ServiceConfig>> {
 **naming-011** (MUST): std clients spanning several RFC modules live in a crate-root client module, keep the version-scoped type name (`Oauth20ClientStd`) and version-less methods. A future protocol version adds a sibling client, unified behind a version-agnostic wrapper only once one exists.
 
 **naming-012** (MUST): log macro messages start lowercase. User-facing error messages start with a capital. Neither carries a trailing dot.
+
+**naming-013** (MUST): the private State enum of a coroutine names each variant after the action in flight, as a present-tense verb, never after what the driver is waiting for: `Start` for the entry point, then `Send`, `Read`, `Copy`, `Rename`, `Probe`, `Scan`, `CreateTmp`, `FetchBaseline`, as io-imap does. An `Await` or `Pending` prefix is banned, since it names the driver's posture rather than the step the coroutine is at. The Display impl reads the same way, a present verb and its object (`read time`, `copy into tmp`, `rename into place`), so a log line says what the coroutine is doing.
+
+## cli
+
+Rules applying to the command-line interface of a product, meaning the cli module of a repository shipping a binary. They describe how a CLI meets someone who has not configured it yet, which is the same encounter in every Pimalaya product.
+
+**cli-001** (MUST): items under the cli module carry no product prefix, since nothing there is meant to be consumed as a library and the binary already names itself. `Cli`, `Command`, `Config`, `AccountConfig`, `ConfigPathsArg` and `Transport` are the canonical names, not their `Comodoro`-prefixed or `Himalaya`-prefixed variants, and this overrides naming-006 and naming-007 for that subtree. A domain prefix survives only where a CLI spans several domains and the bare name would collide (`MailboxCommand` against `MessageCommand`).
+
+**cli-002** (MUST): a CLI reads its configuration from a TOML document holding named accounts, and resolving one is where a command discovers it has nothing to run against. The three ways that fails each name what is missing and what to do about it: a missing configuration names the path it looked for, which is the one `-c` gave or the default location so a mistyped path shows up as itself, a missing named account lists the accounts the configuration does hold, and a missing default account names both ways of picking one.
+
+**cli-003** (MUST): a wizard generates a configuration, it never edits one. It asks the fewest questions that produce a working account, derives the account name rather than prompting for it, and hands back a ready-to-place `[accounts.<name>]` table. Editing an account, adding a second one by hand and everything the questions do not cover belong to the file and the user's editor, against the documented config.sample.toml. A `configure` command runs the wizard on demand, and is the only entry point that skips the welcome, since it was asked for by name.
+
+**cli-004** (MUST): writing the generated account never rewrites what a human wrote. A configuration file that does not exist yet is written whole. One that exists is appended to as plain text, never parsed and re-serialized, so its comments, its ordering and its formatting survive. Two invariants guard the append, both of them properties of the shared accounts table rather than of any one product: the account name must be free, since a second `[accounts.<name>]` table makes the whole document fail to parse and takes the working accounts down with it, and the generated account claims `default` only when no other account does, since two defaults resolve to whichever one the account map yields first.
+
+**cli-005** (MUST): a bare invocation, with no subcommand, is what a newcomer runs first. It offers the wizard when it finds no configuration, and prints the help otherwise. Any command that needs an account raises the same offer, and that offer is a hook rather than a gate: the command carries on afterwards either way, so accepting gives it a chance to work and declining leaves it to fail on the configuration it still has not got. A bare invocation has nothing to carry on to, so a declined offer falls back to the help.
+
+**cli-006** (MUST): interactivity is decided by the streams, never assumed. Nothing prompts when stdin is not a terminal or when `--json` is set, since a cron job cannot answer and a JSON consumer wants a failure it can read: both get the error that names the way out. A generated document goes to stdout whenever stdout is redirected, so `<binary> configure > config.toml` works, and every prompt, banner and confirmation renders on stderr so it never pollutes that document.
+
+**cli-007** (MUST): the welcome a first run prints frames the product in a sentence, names the configuration file that is missing, says what the wizard covers and what stays hand-written, links config.sample.toml, and mentions that `configure` runs the same wizard later so declining costs nothing. The `--help` footer carries the bug tracker and the sponsoring links, through pimalaya-cli's `footer!` macro.
 
 # Markdown
 
@@ -266,6 +294,8 @@ Rules applying to every markdown file (README, CONTRIBUTING, CHANGELOG, cairn/).
 **markdown-004** (MUST): shell command blocks are fenced with sh, not bash nor shell.
 
 **markdown-005** (SHOULD): stay concise yet precise, with signal-dense sentences carrying the subject, the operation, and the reason. No marketing prose, no motivation paragraphs. Prefer paragraphs over dash lists in prose. Lists are for genuinely enumerable content.
+
+**markdown-006** (MUST): no paragraph runs longer than three lines as rendered. Longer is the signal that it is not concise enough, so it is cut or split at a real seam, never rewrapped, markdown-001 forbidding hard wrapping in the first place. Expect a trimmed file to gain lines rather than lose them: the rule buys scannability, not bytes.
 
 ## readme
 
@@ -398,6 +428,8 @@ This project is licensed under either of:
 
 **readme-015** (MUST): Sponsoring closes the README with the NLnet banner, the year-by-year grant list (2022 to 2023 NGI Assure, 2023 to 2024 NGI Zero Entrust, 2024 to 2026 NGI Zero Core, 2026 to 2027 NGI Zero Commons Fund), then the six donation badges (GitHub Sponsors, Ko-fi, Buy Me a Coffee, Liberapay, thanks.dev, PayPal). The block is byte-identical across repos. Copy it from an existing README rather than retyping it.
 
+**readme-016** (MUST): the donation badges link where [.github/FUNDING.yml](./.github/FUNDING.yml) says they link, that file being the single source of truth for where the money goes. It is what GitHub renders in the repository sidebar, so a README pointing elsewhere contradicts the button next to it. An account that moves is changed there first, then propagated to every README in the same pass, since a stale badge is a dead link nobody reports.
+
 ## contributing
 
 **contributing-001** (MUST): the standard contributing guide lives once at the org level, in [.github/CONTRIBUTING.md](./CONTRIBUTING.md). GitHub serves it as the default for every repository that does not ship its own. It covers the reading order (Pimalaya README, then the org guides, then the local docs), the Nix development environment, the layered build checks, lint, test, audit, dependency overrides, and the commit style.
@@ -423,7 +455,7 @@ Everything below documents only what differs from the Pimalaya standards.
 
 ## changelog
 
-**changelog-001** (MUST): the CHANGELOG uses the Keep a Changelog 1.0.0 format with SemVer, entries grouped under Added, Changed, Fixed, Removed. Each item is a one-line (two max) past-tense summary of the change. When more context is needed, an indented paragraph follows after a blank line.
+**changelog-001** (MUST): the CHANGELOG uses the Keep a Changelog 1.0.0 format with SemVer, entries grouped under Added, Changed, Fixed, Removed. Each item opens with a one-line (two max) past-tense summary of the change. When more context is needed, one or more indented paragraphs follow after a blank line. Both stay concise and never verbose: the summary line is a summary, not the explanation folded into the first line.
 
 **changelog-002** (MUST): a release section reports the net changes relative to the previous version, not a complete history log. Interior churn is folded into final-state entries, and history belongs to the cairn/ log.
 
