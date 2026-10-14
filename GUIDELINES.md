@@ -18,7 +18,7 @@ Ask to check a repository against specific ids (`readme-003`, `naming-007`), aga
 
 ## Table of contents
 
-- Code: [repo](#repo), [commits](#commits), [nix](#nix), [cargo](#cargo), [crate](#crate), [header](#header), [inline](#inline), [logging](#logging), [naming](#naming), [cli](#cli)
+- Code: [repo](#repo), [commits](#commits), [nix](#nix), [cargo](#cargo), [crate](#crate), [header](#header), [inline](#inline), [logging](#logging), [naming](#naming), [cli](#cli), [java](#java)
 - Markdown: [markdown](#markdown), [readme](#readme), [contributing](#contributing), [changelog](#changelog), [cairn](#cairn)
 - Audit: [tests](#tests), [security](#security), [license](#license)
 
@@ -278,6 +278,34 @@ Rules applying to the command-line interface of a product, meaning the cli modul
 **cli-006** (MUST): interactivity is decided by the streams, never assumed. Nothing prompts when stdin is not a terminal or when `--json` is set, since a cron job cannot answer and a JSON consumer wants a failure it can read: both get the error that names the way out. A generated document goes to stdout whenever stdout is redirected, so `<binary> configure > config.toml` works, and every prompt, banner and confirmation renders on stderr so it never pollutes that document.
 
 **cli-007** (MUST): the welcome a first run prints frames the product in a sentence, names the configuration file that is missing, says what the wizard covers and what stays hand-written, links config.sample.toml, and mentions that `configure` runs the same wizard later so declining costs nothing. The `--help` footer carries the bug tracker and the sponsoring links, through pimalaya-cli's `footer!` macro.
+
+## java
+
+Rules applying to Java sources, today the Android apps. They mirror the Rust rules where both languages meet the same question.
+
+**java-001** (MUST): the Java side of an app backed by a Rust bridge is the UI and the platform, and holds as little logic as possible. Protocols, formats and sync decisions live in Rust. Logic that has to stay in Java (threading, Android components, platform providers) is kept out of screens and tested, and logic duplicating the Rust side moves there rather than grows.
+
+**java-002** (MUST): packages are named after the domain first, then the role, flat inside a domain until it outgrows about 25 files. There is no util, common, helpers or model catch-all package (mirror of naming-005), and screens live in their domain's package, next to the stores they read.
+
+**java-003** (MUST): classes and members are package-private by default, `public` only when another package uses them. No `protected` member exists only for a test.
+
+**java-004** (MUST): dependencies point one way: screens and shared widgets, then the domain, then sync and the store, then the bridge client, never back. The composition root may depend on everything and nothing depends on it. A JVM test encodes the allowed edges.
+
+**java-005** (MUST): Android components registered by class name in the manifest or a layout keep their class names, since launcher shortcuts, scheduled jobs and inflated views point at them. Components stay thin and delegate into the domain packages.
+
+**java-006** (MUST): class names carry no product prefix, since the package names the domain. A domain word survives only where two domains would collide.
+
+**java-007** (MUST): data crossing a package boundary or living longer than a method is typed, as a record. JSON stays at the bridge boundary and in persistence formats. Closed sets are enums, never Strings.
+
+**java-008** (SHOULD): a method takes at most four parameters, beyond which a params record named after the operation holds them. No nullable constructor argument selects a role: two roles are two classes. A boolean parameter is allowed only when its name says what it means, never as a `true, false, true` list.
+
+**java-009** (MUST): no mutable static state serves as a global. One composition root builds the object graph and hands it down. A singleton is kept only for a process resource such as the database, and one lock registry guards shared state.
+
+**java-010** (MUST): one owner holds the executors, and work posts back to the UI only through the guarded path that drops results for a destroyed screen.
+
+**java-011** (MUST): tests mirror the packages, so they reach package-private code, and fake only the bridge client. Robolectric is used where a test genuinely needs Android types.
+
+**java-012** (MUST): every package carries a package-info.java whose first sentence titles it, followed by paragraphs of at most four lines. The root package's is the architecture document, the Java twin of a Rust crate header. A Javadoc is one summary line, then at most three lines after a blank line (mirror of inline-002); `@param` and `@throws` lines that carry a contract, as a record component's, do not count, and self-evident ones are dropped. Line comments follow inline-004's tags and explain a why, never a what. Code wraps at 100 columns, comments and Javadoc at 80.
 
 # Markdown
 
