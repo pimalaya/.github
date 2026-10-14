@@ -101,7 +101,7 @@ A Pimalaya crate is organized as up to three layers, each behind a Cargo feature
 A repository stops at whichever layer makes sense:
 
 - **Pure library**: layers 1 and 2 (for example `io-imap`, `io-vdir`). Published to crates.io as a library.
-- **Library plus CLI**: layers 1 to 3 in one repo, the CLI gated behind a feature so library consumers never pull in the argument parser or terminal dependencies (for example `ortie` and `pimconf`, which both ship coroutines, a blocking client, and a CLI).
+- **Library plus CLI**: layers 1 to 3 in one repo, the CLI gated behind a feature so library consumers never pull in the argument parser or terminal dependencies (for example `ortie` and `io-pim-discovery`, which both ship coroutines, a blocking client, and a CLI).
 - **Standalone application**: a repo whose identity is the product (for example `himalaya`, `neverest`, `cardamum`). It wires several libraries together and owns the I/O loop.
 
 The rule of thumb: a layer is always feature-gated, never assumed. Gate features on **items** (`mod`, `fn`, variant), not around blocks inside a function body. Never use `compile_error!` to forbid a feature combination; gate the module and `bail!` at the call site instead.
@@ -148,7 +148,7 @@ Applications do not each reinvent argument parsing, configuration or discovery. 
 - **`pimalaya-cli`**: argument parsing, interactive prompts, spinner, terminal helpers, build scripts.
 - **`pimalaya-config`**: configuration loading (TOML) and secrets handling.
 - **`pimalaya-tui`**: terminal UI building blocks for the TUIs.
-- **`pimconf`**: discovery of PIM services (Thunderbird autoconfig, DNS SRV per RFC 6186, well-known URLs per RFC 6764).
+- **`io-pim-discovery`**: discovery of PIM services (provider rules, PACC, Thunderbird autoconfig, DNS SRV per RFC 6186, CalDAV and CardDAV per RFC 6764, JMAP per RFC 8620, OAuth metadata per RFC 8414).
 
 ### Command conventions
 
