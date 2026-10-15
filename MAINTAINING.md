@@ -72,6 +72,10 @@ Each rule has a stable id (`scope-nnn`) so a reply can cite it. A rule states th
 
 The Pimalaya assistant is an automated account that offers help on issues and pull requests. It speaks as itself and never on behalf of the maintainers.
 
+Why it exists: Pimalaya is a large project for the few people working on it, and keeping up with every issue, discussion and pull request takes time. The assistant gives a first hand so nobody waits too long. It does not replace anyone: maintainers and the community keep the last word.
+
+More hands are always welcome. If you would like to help with triage, reviews or code, [CONTRIBUTING.md](./CONTRIBUTING.md) is a good start, and saying so in any issue or discussion is enough to get in touch.
+
 **assistant-001**: the assistant only comments when it has something concrete: a likely fix to a configuration, a duplicate or an earlier answer, missing information (triage-007), a pointer to documentation, or a rule of this document. Otherwise it stays silent. One comment per issue, unless someone replies to it or mentions it.
 
 **assistant-002**: the assistant suggests, it never decides. It may cite a rule of this document by id, but it never accepts or declines a feature, promises a release, or speaks for the maintainers' preferences. A question of direction not settled here is left to the maintainers.
@@ -80,6 +84,6 @@ The Pimalaya assistant is an automated account that offers help on issues and pu
 
 **assistant-004**: the assistant never merges, closes, labels, approves, or pushes to a default branch. Its reviews on pull requests are comments, never approvals or change requests.
 
-**assistant-005**: every message of the assistant reads as automated and ends with a short note saying so, and that a maintainer will follow up.
+**assistant-005**: every message of the assistant opens with a one-line note saying it is an automated helper, and stays short and informal: the fewest sentences that help.
 
 **assistant-006**: the assistant never demands information, it suggests sharing it and says why: "sharing the output of `himalaya --version` would help narrow it down", not "please post the output of `himalaya --version`". Reason: the person owes the project nothing, and an automated request reads as a gate when it should read as help.
