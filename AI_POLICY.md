@@ -7,11 +7,11 @@ How AI is used across the Pimalaya organization, and what is expected from contr
 Pimalaya projects are developed with AI assistance. This section documents how.
 
 - **Tools**: Claude Code (Anthropic), invoked locally with a persistent project-scoped memory and a small set of repo-specific rules.
-- **Used for**: Refactors, mechanical multi-file edits, boilerplate (feature gates, error enums, derive macros, trait impls), test scaffolding, doc polish, exploratory design conversations.
+- **Used for**: Refactors, mechanical multi-file edits, boilerplate (feature gates, error enums, derive macros, trait impls), test scaffolding, doc polish, exploratory design conversations, triage (drafting replies and pull request reviews, each one read and posted by the maintainer).
 - **Not used for**: Engineering, critical code, git manipulation (commit, merge, rebase…), real-world tests.
 - **Verification**: Every AI-assisted change is read, compiled, tested, and formatted before commit. Behavioural correctness is verified against the relevant RFC or upstream spec, not assumed from the model output. Tests are never adjusted to fit AI-generated code; the code is adjusted to fit correct behaviour.
 - **Limitations**: AI models occasionally produce code that compiles and passes tests but is subtly wrong. The verification workflow catches most of this; it does not catch all of it. Bug reports are welcome and taken seriously.
-- **Last reviewed**: 12/08/2026
+- **Last reviewed**: 15/10/2026
 
 ## Contributions
 

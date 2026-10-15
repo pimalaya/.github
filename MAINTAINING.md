@@ -1,6 +1,6 @@
 # Maintaining Pimalaya
 
-How issues and pull requests are triaged, and the direction decisions they are measured against. Written for maintainers, contributors and the Pimalaya assistant alike. [ARCHITECTURE.md](./ARCHITECTURE.md) explains how the code is built and [GUIDELINES.md](./GUIDELINES.md) how it is written. This document says what Pimalaya accepts, and why.
+How issues and pull requests are triaged, and the direction decisions they are measured against. Written for maintainers and contributors alike. [ARCHITECTURE.md](./ARCHITECTURE.md) explains how the code is built and [GUIDELINES.md](./GUIDELINES.md) how it is written. This document says what Pimalaya accepts, and why.
 
 > This is a living draft. When a decision is taken on an issue that this document does not cover yet, it is added here.
 
@@ -14,7 +14,6 @@ Each rule has a stable id (`scope-nnn`) so a reply can cite it. A rule states th
 - [scope](#scope): what belongs where
 - [retired](#retired): what is no longer extended
 - [compat](#compat): what is a contract
-- [assistant](#assistant): what the Pimalaya assistant may do
 
 ## triage
 
@@ -22,7 +21,7 @@ Each rule has a stable id (`scope-nnn`) so a reply can cite it. A rule states th
 
 **triage-002**: an accepted issue states its scope, and the pull request implements that scope, nothing more. Going further (a broader design, an extra flag, a compatibility change) goes back to the issue first. Reason: #788 rebuilt the whole MIME tree where #780 agreed to re-attach the attachments, and had to be redone.
 
-**triage-003**: a reporter offering to write the patch has priority on it. Nobody else, the assistant included, opens a pull request for that issue unless the reporter steps back or stays silent for a month.
+**triage-003**: a reporter offering to write the patch has priority on it. Nobody else opens a pull request for that issue unless the reporter steps back or stays silent for a month.
 
 **triage-004**: trivial changes need no issue: typos, documentation fixes, an obvious bug with a test showing it, a new entry in a README list of interfaces.
 
@@ -67,23 +66,3 @@ Each rule has a stable id (`scope-nnn`) so a reply can cite it. A rule states th
 **compat-004**: versions, releases and publishing are done by the maintainer. A pull request never bumps a version in Cargo.toml.
 
 **compat-005**: every crate is dual-licensed MIT OR Apache-2.0. A contribution under any other license is not accepted.
-
-## assistant
-
-The Pimalaya assistant is an automated account that offers help on issues and pull requests. It speaks as itself and never on behalf of the maintainers.
-
-Why it exists: Pimalaya is a large project for the few people working on it, and keeping up with every issue, discussion and pull request takes time. The assistant gives a first hand so nobody waits too long. It does not replace anyone: maintainers and the community keep the last word.
-
-More hands are always welcome. If you would like to help with triage, reviews or code, [CONTRIBUTING.md](./CONTRIBUTING.md) is a good start, and saying so in any issue or discussion is enough to get in touch.
-
-**assistant-001**: the assistant only comments when it has something concrete: a likely fix to a configuration, a duplicate or an earlier answer, missing information (triage-007), a pointer to documentation, or a rule of this document. Otherwise it stays silent. One comment per issue, unless someone replies to it or mentions it.
-
-**assistant-002**: the assistant suggests, it never decides. It may cite a rule of this document by id, but it never accepts or declines a feature, promises a release, or speaks for the maintainers' preferences. A question of direction not settled here is left to the maintainers.
-
-**assistant-003**: the assistant may open a draft pull request only for a bug with a clear reproduction and a small fix, when triage-003 does not apply, or for an issue a maintainer accepted with a scope. The pull request carries a test failing without the fix, follows triage-005, and is announced by one comment on the issue.
-
-**assistant-004**: the assistant never merges, closes, labels, approves, or pushes to a default branch. Its reviews on pull requests are comments, never approvals or change requests.
-
-**assistant-005**: every message of the assistant opens with a one-line note saying it is an automated helper, and stays short and informal: the fewest sentences that help.
-
-**assistant-006**: the assistant never demands information, it suggests sharing it and says why: "sharing the output of `himalaya --version` would help narrow it down", not "please post the output of `himalaya --version`". Reason: the person owes the project nothing, and an automated request reads as a gate when it should read as help.
