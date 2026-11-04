@@ -380,13 +380,10 @@ This library is composed of 3 feature-gated layers:
 - **Device authorization grant**: sign in by typing a short code on another device, for hosts without a browser.
 ```
 
-The TLS support block keeps this exact shape, and the section closes with the tip callout when the crate uses cargo features.
+The TLS support is one bullet like any other, with no nested list, naming each TLS feature and the default one. A crate-specific trait of its client may extend the line. The section closes with the tip callout when the crate uses cargo features.
 
 ```markdown
-- Full standard, blocking client with **TLS** support:
-  - [Rustls](https://crates.io/crates/rustls) with ring crypto (requires `rustls-ring` feature, enabled by default)
-  - [Rustls](https://crates.io/crates/rustls) with aws crypto (requires `rustls-aws` feature)
-  - [Native TLS](https://crates.io/crates/native-tls) (requires `native-tls` feature)
+- **Full client**: blocking client with TLS via Rustls (`rustls-ring` default, `rustls-aws`) or Native TLS (`native-tls`).
 ```
 
 **readme-009** (MUST): the RFC or API coverage section states what the crate supports in protocol terms, each RFC (or provider API) linked, with no code identifiers, just an explanation of what is covered.
