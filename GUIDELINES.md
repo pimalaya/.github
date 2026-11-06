@@ -374,16 +374,16 @@ This library is composed of 3 feature-gated layers:
 
 **readme-007** (MUST): sections appear in order. Libraries: Table of contents, Features, RFC coverage, Usage, Examples, License, Social, Sponsoring. CLIs and TUIs: Table of contents, Features, RFC or API coverage (when meaningful), Installation, Configuration, Usage, License, Social, Sponsoring. AI policy and Contributing carry no section of their own: they exist only as table of contents entries linking out (see readme-013), placed where their section used to sit, AI policy before License and Contributing between Social and Sponsoring. When the tool targets named providers, the Configuration section gains one subsection per provider, each nested under Configuration in the table of contents.
 
-**readme-008** (MUST): the Features section has one bullet per feature, two lines max each, worded for users rather than implementers. No RFC references, since they belong to the coverage section.
+**readme-008** (MUST): the Features section lists only the features a user would pick the project for, six bullets at most for a library and eight for an application. Each bullet is one line of 120 characters at most, bold name included: a single clause worded for users rather than implementers, never a second sentence, never a nested list. Everything else belongs to the coverage section or to docs.rs, not here. A library carrying the layers block (readme-005) does not repeat its layers as bullets, only the full client one naming the TLS features. No RFC references, since they belong to the coverage section.
 
 ```markdown
 - **Device authorization grant**: sign in by typing a short code on another device, for hosts without a browser.
 ```
 
-The TLS support is one bullet like any other, with no nested list, naming each TLS feature and the default one. A crate-specific trait of its client may extend the line. The section closes with the tip callout when the crate uses cargo features.
+The TLS support is one bullet like any other, with no nested list, naming each TLS feature and the default one. The section closes with the tip callout when the crate uses cargo features.
 
 ```markdown
-- **Full client**: blocking client with TLS via Rustls (`rustls-ring` default, `rustls-aws`) or Native TLS (`native-tls`).
+- **Full client**: TLS via Rustls (`rustls-ring` default, `rustls-aws`) or Native TLS (`native-tls`).
 ```
 
 **readme-009** (MUST): the RFC or API coverage section states what the crate supports in protocol terms, each RFC (or provider API) linked, with no code identifiers, just an explanation of what is covered.
