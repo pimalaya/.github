@@ -281,6 +281,8 @@ Rules applying to the command-line interface of a product, meaning the cli modul
 
 **cli-008** (MUST): hooks have one shape across products. They sit in a `hooks` table, each named `on-<subject>-<event>` with the event a bare verb and the subject left out when the product has one (`on-timer-start`, `on-message-add`, `on-issue`). A hook runs a `command` (a shell line or a program and its arguments, read through pimalaya-config's `command` module) and may show a `notify` (read through pimalaya-config's `notify` module), which a product leaves out when its events need no desktop notification, a command such as `notify-send` standing in. Its variables are camelCase, as `--json` keys are (`$expiresIn`, `$senderName`), are expanded in a notification with the shell's syntax (`$name`, `${name}`, `${name:-default}`) through pimalaya-config, and reach a command as environment variables of the same names, so one spelling serves both. A renamed variable is refused by name in a notification, which is checked when the configuration is read, but keeps reaching a command under its former name too until the next major, since a command is never checked and a missing name expands to an empty string without a word.
 
+**cli-009** (MUST): the configuration path is overridden by `-c` (`--config`) only. The flag is repeatable, the first path being the base and the next ones deep-merged on top, and each occurrence is one path, never split on a delimiter, since `:` and `;` belong to paths (`C:\` on Windows). There is no `<NAME>_CONFIG` environment variable: a shell variable reaches the flag as `-c "$VAR"`.
+
 ## java
 
 Rules applying to Java sources, today the Android apps. They mirror the Rust rules where both languages meet the same question.
@@ -409,7 +411,7 @@ A configuration is loaded from the first valid path among:
 - $HOME/.config/<name>/config.toml
 - $HOME/.<name>rc
 
-Override the path with -c <PATH> or <NAME>_CONFIG=<PATH>. Multiple paths can be passed at once, separated by :. The first one is the base and the rest are deep-merged on top. The full field reference lives in [config.sample.toml](./config.sample.toml).
+Override the path with -c <PATH>. Repeat it to merge several files: the first one is the base and the next ones are deep-merged on top. The full field reference lives in [config.sample.toml](./config.sample.toml).
 ```
 
 **readme-011** (MUST): when the tool targets named providers whose setup discovery cannot fully automate, the Configuration section gains one subsection per provider, each listed (nested under Configuration) in the table of contents. The subsection carries that provider's ready-made configuration block (endpoints, scopes, and a public client where one exists) as a fenced toml snippet, plus the caveats that setup trips over. This is the one place a README carries configuration code: the recipes render on the repository page and stay in a single source of truth, while config.sample.toml keeps only the annotated field skeleton and points here for the per-provider blocks.
