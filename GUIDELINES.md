@@ -279,6 +279,8 @@ Rules applying to the command-line interface of a product, meaning the cli modul
 
 **cli-007** (MUST): the welcome a first run prints frames the product in a sentence, names the configuration file that is missing, says what the wizard covers and what stays hand-written, links config.sample.toml, and mentions that `configure` runs the same wizard later so declining costs nothing. The `--help` footer carries the bug tracker and the sponsoring links, through pimalaya-cli's `footer!` macro.
 
+**cli-008** (MUST): hooks have one shape across products. They sit in a `hooks` table, each named `on-<subject>-<event>` with the event a bare verb and the subject left out when the product has one (`on-timer-start`, `on-message-add`, `on-issue`). A hook runs a `command` (a shell line or a program and its arguments, read through pimalaya-config's `command` module) and may show a `notify` (read through pimalaya-config's `notify` module), which a product leaves out when its events need no desktop notification, a command such as `notify-send` standing in. Its variables are camelCase, as `--json` keys are (`$expiresIn`, `$senderName`), are expanded in a notification with the shell's syntax (`$name`, `${name}`, `${name:-default}`) through pimalaya-config, and reach a command as environment variables of the same names, so one spelling serves both. A renamed variable is refused by name in a notification, which is checked when the configuration is read, but keeps reaching a command under its former name too until the next major, since a command is never checked and a missing name expands to an empty string without a word.
+
 ## java
 
 Rules applying to Java sources, today the Android apps. They mirror the Rust rules where both languages meet the same question.
