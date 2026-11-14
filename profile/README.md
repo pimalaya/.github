@@ -114,6 +114,27 @@ Applications also share a small framework that is not shown above: [pimalaya-cli
 - [Calendula CLI](https://github.com/pimalaya/calendula), a CLI to manage calendar events
 - [tcal CLI & lib](https://github.com/pimalaya/tcal), a CLI & lib to edit iCalendars as ergonomic TOML
 
+
+## 💬 Chat
+
+### Libraries
+
+- [chat](https://github.com/pimalaya/chat)/[matrix-lib](https://github.com/pimalaya/chat/tree/master/matrix): Rust library for Matrix protocol implementation
+- [chat](https://github.com/pimalaya/chat)/[chat-lib](https://github.com/pimalaya/chat/tree/master/chat): Rust library for general chat functionality
+
+### Projects
+
+#### Everest, *the chat client*
+
+Everest aims to be a comprehensive solution for **managing chat communications** within the Pimalaya ecosystem. It leverages the Matrix protocol for decentralized, secure messaging. Current features include:
+
+- [CLI](https://github.com/pimalaya/everest)
+- Integration with other Pimalaya services (e.g., Himalaya for email notifications, Comodoro for time-based alerts)
+- End-to-end encryption for secure communications
+- Support for public and private rooms
+- Automatic room creation and invitation for Pimalaya groups
+- Content sharing and forwarding from other Pimalaya services to relevant chat rooms
+
 ## 🔒 Security
 
 - [Ortie CLI & lib](https://github.com/pimalaya/ortie), to manage OAuth 2.0 tokens
