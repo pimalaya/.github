@@ -23,6 +23,7 @@ AI-assisted contributions are welcome, held to the same bar as any other. Read t
 - Verify before opening: the change builds across the feature matrix, the tests pass, clippy and fmt are clean, and the behaviour is checked against the relevant RFC or upstream spec.
 - Never adjust a test to fit generated code, adjust the code instead (rule tests-001 of the guidelines).
 - Keep the diff scoped to one intent. Unreviewed bulk output is closed without review.
+- Leave out AI-written inline `//` comments: only `///` and `//!` docs and `// SAFETY:` (rule inline-004 of the guidelines). A comment you write by hand is yours to add.
 
 ## Agents
 
