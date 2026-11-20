@@ -64,9 +64,11 @@ rustdoc-args = ["--cfg", "docsrs"]
 [features]
 default = ["rustls-ring"]
 client = []
-rustls-ring = ["client", "pimalaya-stream/rustls-ring", "dep:anyhow", "dep:pimalaya-stream"]
-rustls-aws = ["client", "pimalaya-stream/rustls-aws", "dep:anyhow", "dep:pimalaya-stream"]
-native-tls = ["client", "pimalaya-stream/native-tls", "dep:anyhow", "dep:pimalaya-stream"]
+server = []
+std = ["client"]
+rustls-ring = ["std", "pimalaya-stream/rustls-ring", "dep:anyhow", "dep:pimalaya-stream"]
+rustls-aws = ["std", "pimalaya-stream/rustls-aws", "dep:anyhow", "dep:pimalaya-stream"]
+native-tls = ["std", "pimalaya-stream/native-tls", "dep:anyhow", "dep:pimalaya-stream"]
 vendored = ["pimalaya-stream?/vendored"]
 
 [[example]]
@@ -91,7 +93,7 @@ thiserror = { version = "2", default-features = false }
 
 **cargo-005** (MUST): for libraries, documentation points at docs.rs and the docs.rs metadata block enables all features with the docsrs cfg.
 
-**cargo-006** (MUST): features follow the layered shape. default enables the default TLS provider. client = [] gates the std-blocking client, the blessed std-gating. Each TLS feature implies client, selects the pimalaya-stream provider, and pulls the optional client-side deps via dep:. vendored forwards to the weak pimalaya-stream dependency.
+**cargo-006** (MUST): features follow the layered shape, the one io-imap, io-smtp and io-webdav ship. default enables the default TLS provider. client gates the client side of the protocol (its coroutines and the deps only they need), server gates the server side where the crate has one, and std gates the std-blocking client, the blessed std-gating, implying client. Each TLS feature implies std, selects the pimalaya-stream provider, and pulls the optional client-side deps via dep:. vendored forwards to the weak pimalaya-stream dependency.
 
 **cargo-007** (MUST): every example gets its own example block with explicit name and path, plus required-features when it needs a gated layer.
 
@@ -109,11 +111,11 @@ panic = "abort"
 
 ## crate
 
-**crate-001** (MUST): #![no_std] is unconditional on libraries, never feature-gated. extern crate alloc; is declared whenever the crate allocates. extern crate std; only when std is genuinely needed, usually behind the client feature.
+**crate-001** (MUST): #![no_std] is unconditional on libraries, never feature-gated. extern crate alloc; is declared whenever the crate allocates. extern crate std; only when std is genuinely needed, behind the std feature.
 
 **crate-002** (MUST): deliberately-std utility crates exposing no I/O-free coroutines (pimalaya-stream wrapping TLS providers and sockets, the pimalaya-* helpers) are exempt. They carry no #![no_std] and no extern crates, and their lib.rs opens directly with the docsrs attribute. Their modules sit flat at the crate root, and a runtime-named module (std, tokio) is only introduced the day two runtimes genuinely coexist.
 
-**crate-003** (MUST): the golden rule for feature-gating is that a cargo feature is justified only when it pulls additional crates into the build, std included. The client feature gating the std-blocking client is the canonical example. When gating some code would not change the crate set at all, do not gate it: remove the feature and ship the code unconditionally.
+**crate-003** (MUST): the golden rule for feature-gating is that a cargo feature is justified only when it pulls additional crates into the build, std included. The std feature gating the std-blocking client is the canonical example. client and server are the one exception: each gates a side of the protocol a consumer may leave out (a server takes no client), even when it pulls no crate of its own. When gating some code would not change the crate set at all, do not gate it: remove the feature and ship the code unconditionally.
 
 **crate-004** (MUST): imports take from core and alloc as much as possible, and from std only the strict minimum core and alloc cannot provide. They are organised in blocks separated by one empty line, in this order: core, alloc, std, third-party crates, crate. super is never used, in-crate paths always go through crate. Within a block, imports from the same crate are merged into a single use. The only reason for two use declarations on the same crate is a feature gate on one of them.
 
@@ -122,7 +124,7 @@ use core::fmt;
 
 use alloc::{string::String, vec::Vec};
 
-#[cfg(feature = "client")]
+#[cfg(feature = "std")]
 use std::io::{Read, Write};
 
 use serde::Deserialize;
