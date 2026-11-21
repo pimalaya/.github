@@ -349,6 +349,7 @@ Rules applying to every markdown file (README, CONTRIBUTING, CHANGELOG, cairn/).
   <p>
     <a href="https://matrix.to/#/#pimalaya:matrix.org"><img alt="Matrix" src="https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white"/></a>
     <a href="https://fosstodon.org/@pimalaya"><img alt="Mastodon" src="https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white"/></a>
+    <a href="https://pimalaya.org/sponsor/"><img alt="Sponsor" src="https://img.shields.io/badge/sponsor-pink?style=flat&logo=github-sponsors&logoColor=white"/></a>
   </p>
 </div>
 ```
@@ -356,7 +357,7 @@ Rules applying to every markdown file (README, CONTRIBUTING, CHANGELOG, cairn/).
 **readme-004** (MUST): the markdown flavour is for every other repo. The docs.rs badge comes first and is skipped when no library is published on crates.io.
 
 ```markdown
-# <Maybe icon> <Name> [![Documentation](https://img.shields.io/docsrs/<crate>?style=flat&logo=docs.rs&logoColor=white)](https://docs.rs/<crate>/latest/<crate>) [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya)
+# <Maybe icon> <Name> [![Documentation](https://img.shields.io/docsrs/<crate>?style=flat&logo=docs.rs&logoColor=white)](https://docs.rs/<crate>/latest/<crate>) [![Matrix](https://img.shields.io/badge/chat-%23pimalaya-blue?style=flat&logo=matrix&logoColor=white)](https://matrix.to/#/#pimalaya:matrix.org) [![Mastodon](https://img.shields.io/badge/news-%40pimalaya-blue?style=flat&logo=mastodon&logoColor=white)](https://fosstodon.org/@pimalaya) [![Sponsor](https://img.shields.io/badge/sponsor-pink?style=flat&logo=github-sponsors&logoColor=white)](https://pimalaya.org/sponsor/)
 
 <One-sentence description without trailing dot>
 ```
@@ -371,7 +372,7 @@ This library is composed of 3 feature-gated layers:
 - High-level **full client**: the light client plus TCP connections and TLS negotiations handled for you
 ```
 
-**readme-006** (MUST): binaries with a visible interface show it between the one-line description and the table of contents: the flagship binaries above and every GUI application. A single centered screenshot suits a single screen. An application with several screens uses a horizontally scrolling row instead. Screenshots live in a screenshots/ folder at the repository root. Libraries ship no screenshot. The scrolling row is a plain HTML table, one screenshot per column in a single row, each image given a fixed pixel width so the combined width overflows the README column and GitHub renders a horizontal scrollbar rather than wrapping onto a second line. A CLI, whose interface is its output, shows a terminal block instead of a screenshot: one real command line in a `sh` fence, ideally under `--json` since the JSON output is what the family's CLIs are managed through, then its real output in a fence of its own. A test (tests/docs.rs) runs that command against a fixture and compares its output with the block, so the block cannot drift the way an image does.
+**readme-006** (MUST): binaries with a visible interface show it between the one-line description and the table of contents: the flagship binaries above and every GUI application. A single centered screenshot suits a single screen. An application with several screens uses a horizontally scrolling row instead. Screenshots live in a screenshots/ folder at the repository root. Libraries ship no screenshot. The scrolling row is a plain HTML table, one screenshot per column in a single row, each image given a fixed pixel width so the combined width overflows the README column and GitHub renders a horizontal scrollbar rather than wrapping onto a second line. A CLI, whose interface is its output, shows a terminal block instead of a screenshot: one real command line in a `sh` fence, ideally under `--json` since the JSON output is what the family's CLIs are managed through, then its real output in a fence of its own. A test (tests/docs.rs) runs that command against a fixture and compares its output with the block, so the block cannot drift the way an image does. Any other CLI MAY show such a terminal block too, right under the one-sentence description of the markdown flavour, held to the same test.
 
 ```html
 <table><tr>
@@ -380,7 +381,7 @@ This library is composed of 3 feature-gated layers:
 </tr></table>
 ```
 
-**readme-007** (MUST): sections appear in order. Libraries: Table of contents, Features, RFC coverage, Usage, Examples, License, Social, Sponsoring. CLIs and TUIs: Table of contents, Features, RFC or API coverage (when meaningful), Installation, Configuration, Usage, License, Social, Sponsoring. AI policy and Contributing carry no section of their own: they exist only as table of contents entries linking out (see readme-013), placed where their section used to sit, AI policy before License and Contributing between Social and Sponsoring. When the tool targets named providers, the Configuration section gains one subsection per provider, each nested under Configuration in the table of contents.
+**readme-007** (MUST): sections appear in order. Libraries: Table of contents, Features, RFC coverage, Usage, Examples, License, Social, Sponsoring. CLIs and TUIs: Table of contents, Features, RFC or API coverage (when meaningful), Installation, Configuration, Usage, Alternatives (optional), License, Social, Sponsoring. An application MAY carry the Alternatives section: one bullet per similar tool, its name linked, with a few words on how it differs; libraries carry none. AI policy and Contributing carry no section of their own: they exist only as table of contents entries linking out (see readme-013), placed where their section used to sit, AI policy before License and Contributing between Social and Sponsoring. When the tool targets named providers, the Configuration section gains one subsection per provider, each nested under Configuration in the table of contents.
 
 **readme-008** (MUST): the Features section lists only the features a user would pick the project for, six bullets at most for a library and eight for an application. Each bullet is one line of 120 characters at most, bold name included: a single clause worded for users rather than implementers, never a second sentence, never a nested list. Everything else belongs to the coverage section or to docs.rs, not here. A library carrying the layers block (readme-005) does not repeat its layers as bullets, only the full client one naming the TLS features. No RFC references, since they belong to the coverage section.
 
@@ -406,7 +407,7 @@ The TLS support is one bullet like any other, with no nested list, naming each T
 [7591]: https://www.rfc-editor.org/rfc/rfc7591
 ```
 
-**readme-010** (MUST): for CLIs and TUIs, Installation subsections appear in order: Pre-built binary, Cargo, Nix, Sources. Configuration describes the wizard behavior when one exists, then the canonical config paths and overrides, linking to config.sample.toml for the full field reference.
+**readme-010** (MUST): for CLIs and TUIs, Installation subsections appear in order: Pre-built binary, Cargo, Nix, Sources. Cargo gives two command lines: the crates.io release first (`cargo install --locked <name>`), the standard install, then `cargo install --locked --git <repository URL>` for a build of the latest `master`. Configuration describes the wizard behavior when one exists, then the canonical config paths and overrides, linking to config.sample.toml for the full field reference.
 
 ```markdown
 A configuration is loaded from the first valid path among:
